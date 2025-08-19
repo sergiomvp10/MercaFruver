@@ -1,0 +1,30 @@
+﻿# Node / Next
+**/node_modules/
+**/.next/
+**/dist/
+**/build/
+coverage/
+
+# Env (variables y secretos)
+.env
+.env.*
+!.env.example
+
+# Base de datos y backups (no subir)
+database.db
+FruverNodeBack/database.db
+backups/
+*.sqlite
+*.db*
+*.db-shm
+*.db-wal
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# SO / editores
+.DS_Store
+Thumbs.db
+.vscode/
