@@ -1,0 +1,1 @@
+export const ACTIONS_PRODUCTS = { CREATE: "create", UPDATE:"update", DELETE:"delete", SHOW:"show", SET_VALUE:"set_value" };
