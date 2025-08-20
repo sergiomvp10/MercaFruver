@@ -1,2 +1,2 @@
-cd C:/Users/MyFruver/Documents/FruverReactFront
+cd FruverReactFront
 npm run dev

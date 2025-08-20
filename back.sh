@@ -1,2 +1,2 @@
-cd C:/Users/MyFruver/Documents/FruverNodeBack
+cd FruverNodeBack
 npm run dev
