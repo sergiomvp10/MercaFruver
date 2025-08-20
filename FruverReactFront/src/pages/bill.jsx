@@ -20,7 +20,6 @@ const Bill = () => {
         <img className="scale-150" src="/images/logo.jpg" alt="" />
         <br />
         <br />
-        <div className="font-bold text-2xl">Ticket Venta #{contextSale.sale}</div>
         <div>Nayibe Alarcon Parada</div>
         <div>C.C 46454129</div>
         <div>Calle 16 # 12 -26</div>
