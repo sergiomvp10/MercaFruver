@@ -50,6 +50,26 @@ export const serviceMakeSale = async (itemsSale, userId)=>{
   return sale.data
 }
 
+export const serviceCompleteSale = async (saleId) => {
+  const response = await axios.put(`${API}/sales/complete/${saleId}`);
+  return response.data;
+}
+
+export const serviceDayReport = async (date) => {
+  const response = await axios.get(`${API}/sales/day-report?date=${date}`);
+  return response.data;
+}
+
+export const serviceDetailedReport = async (date) => {
+  const response = await axios.get(`${API}/sales/detailed-report?date=${date}`);
+  return response.data;
+}
+
+export const serviceTotalReport = async (startDate, endDate) => {
+  const response = await axios.get(`${API}/sales/total-report?startDate=${startDate}&endDate=${endDate}`);
+  return response.data;
+}
+
 export const serviceGetProductByBarcode = async (barcode) => {
     const data = await axios.get(`${API}/products/barcode/${barcode}`);
     return data;

@@ -3,13 +3,14 @@ import ItemSale from "./ItemSale";
 import { totalSale } from "@/utilities/calculates";
 import { moneyFormat } from "@/utilities/formats";
 import Link from "next/link";
-import { serviceMakeSale } from "@/services/productsApi";
+import { serviceMakeSale, serviceCompleteSale } from "@/services/productsApi";
 
 const Sale = ({ itemsSale, deleteItemSale, setPay, setSale }) => {
   const [valuePay, setValuePay] = useState();
 
   const checkPay = async () => {
     const sale = await serviceMakeSale(itemsSale,1)
+    await serviceCompleteSale(sale.id);
     valuePay == undefined ? setPay(totalSale(itemsSale)) : setPay(valuePay);
     setSale(sale.id)
   };

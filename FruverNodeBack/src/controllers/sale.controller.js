@@ -80,3 +80,90 @@ export const totalDaySale = async (req, res, next) => {
   }
 };
 
+export const completeSale = async (req, res, next) => {
+  try {
+    const { saleId } = req.params;
+    await Sale.update({ completed: true }, { where: { id: saleId } });
+    res.status(200).json({ message: "Venta marcada como completada" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error al completar la venta" });
+  }
+};
+
+export const dayReport = async (req, res, next) => {
+  try {
+    const { date } = req.query;
+    const targetDate = date || new Date().toISOString().split('T')[0];
+    
+    const total = await sequelize.query(`
+      SELECT sum(i.price_sale * i.amount) as total 
+      FROM ItemSales i 
+      INNER JOIN Sales s ON i.SaleId = s.id 
+      WHERE s.completed = 1 AND strftime('%Y-%m-%d', s.date) = ?
+    `, { replacements: [targetDate] });
+    
+    res.status(200).json(total[0][0]);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error al obtener reporte del día" });
+  }
+};
+
+export const detailedReport = async (req, res, next) => {
+  try {
+    const { date } = req.query;
+    const targetDate = date || new Date().toISOString().split('T')[0];
+    
+    const details = await sequelize.query(`
+      SELECT p.name, sum(i.amount) as quantity, sum(i.price_sale * i.amount) as total
+      FROM ItemSales i 
+      INNER JOIN Sales s ON i.SaleId = s.id 
+      INNER JOIN Products p ON i.ProductId = p.id
+      WHERE s.completed = 1 AND strftime('%Y-%m-%d', s.date) = ?
+      GROUP BY p.id, p.name
+    `, { replacements: [targetDate] });
+    
+    const totalAmount = await sequelize.query(`
+      SELECT sum(i.price_sale * i.amount) as total 
+      FROM ItemSales i 
+      INNER JOIN Sales s ON i.SaleId = s.id 
+      WHERE s.completed = 1 AND strftime('%Y-%m-%d', s.date) = ?
+    `, { replacements: [targetDate] });
+    
+    res.status(200).json({
+      details: details[0],
+      total: totalAmount[0][0]?.total || 0
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error al obtener reporte detallado" });
+  }
+};
+
+export const totalRangeReport = async (req, res, next) => {
+  try {
+    const { startDate, endDate } = req.query;
+    
+    if (!startDate || !endDate) {
+      return res.status(400).json({ message: "Se requieren fechas de inicio y fin" });
+    }
+    
+    const total = await sequelize.query(`
+      SELECT sum(i.price_sale * i.amount) as total 
+      FROM ItemSales i 
+      INNER JOIN Sales s ON i.SaleId = s.id 
+      WHERE s.completed = 1 AND strftime('%Y-%m-%d', s.date) BETWEEN ? AND ?
+    `, { replacements: [startDate, endDate] });
+    
+    res.status(200).json({
+      startDate,
+      endDate,
+      total: total[0][0]?.total || 0
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error al obtener reporte total" });
+  }
+};
+
