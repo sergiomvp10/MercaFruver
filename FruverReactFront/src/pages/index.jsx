@@ -47,8 +47,11 @@ export default function Home() {
         autoFocus
       />
       <div className="h-full flex flex-col relative">
-        <div className="bg-cyan-400 p-4 text-center font-bold text-2xl">
-          Inicio
+        <div className="bg-cyan-400 p-4 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <img src="/images/logo.jpg" alt="MY FRUVER" className="h-12 w-auto object-contain" />
+            <h1 className="font-bold text-2xl text-white">Inicio</h1>
+          </div>
         </div>
         <div className="flex h-full w-full justify-evenly">
           <div className="h-full grid gap-10 place-content-center">

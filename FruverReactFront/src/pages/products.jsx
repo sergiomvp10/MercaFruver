@@ -52,8 +52,11 @@ const Products = () => {
           ref.current
         )}
       <div className="h-full flex flex-col relative">
-        <div className="bg-lime-400 p-4 text-center font-bold text-2xl">
-          Productos
+        <div className="bg-lime-400 p-4 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <img src="/images/logo.jpg" alt="MY FRUVER" className="h-12 w-auto object-contain" />
+            <h1 className="font-bold text-2xl text-white">Productos</h1>
+          </div>
         </div>
         <div className="h-full grid gap-10 place-content-center">
           <div className="bg-lime-400 p-3 rounded-lg">
