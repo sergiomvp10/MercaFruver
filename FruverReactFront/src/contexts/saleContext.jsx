@@ -1,4 +1,5 @@
 import React, { createContext, useState } from "react";
+import { serviceGetProductByBarcode } from "@/services/productsApi";
 
 export const SaleContext = createContext("hola");
 
@@ -34,8 +35,21 @@ const SaleContextWrap = (props) => {
     setItemsSale(aux);
   };
 
+  const addItemSaleByBarcode = async (barcode) => {
+    try {
+      const response = await serviceGetProductByBarcode(barcode);
+      const product = response.data;
+      setItemsSale([
+        { name: product.name, price_purchase: product.price_purchase, price_sale: product.price_sale, amount: 1, ProductId: product.id },
+        ...itemsSale,
+      ]);
+    } catch (error) {
+      console.error('Error al buscar producto por código de barras:', error);
+    }
+  };
+
   return (
-    <SaleContext.Provider value={{itemsSale, setItemsSale, addItemSale, deleteItemSale, pay, setPay, sale,setSale}} >
+    <SaleContext.Provider value={{itemsSale, setItemsSale, addItemSale, addItemSaleByBarcode, deleteItemSale, pay, setPay, sale,setSale}} >
       {props.children}
     </SaleContext.Provider>
   );

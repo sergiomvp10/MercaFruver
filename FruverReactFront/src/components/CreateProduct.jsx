@@ -5,6 +5,7 @@ import { u1F4C4 } from "react-icons-kit/noto_emoji_regular/u1F4C4";
 import { u1F4B5 } from "react-icons-kit/noto_emoji_regular/u1F4B5";
 import { u1F4B0 } from "react-icons-kit/noto_emoji_regular/u1F4B0";
 import { u1F004 } from "react-icons-kit/noto_emoji_regular/u1F004";
+import { u1F4F1 } from "react-icons-kit/noto_emoji_regular/u1F4F1";
 import { useState } from "react";
 import {serviceCreateProduct} from '../services/productsApi'
 import Swal from "sweetalert2";
@@ -67,6 +68,12 @@ const CreateProduct = ({refetchingProducts, handleModal}) => {
           icon={u1F004}
           onChange={handleForm}
           name="stock"
+        />
+        <InputIcon
+          placeholder={"código de barras"}
+          icon={u1F4F1}
+          onChange={handleForm}
+          name="barcode"
         />
       </div>
       <div>

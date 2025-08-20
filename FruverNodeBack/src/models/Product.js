@@ -28,6 +28,11 @@ export const Product = sequelize.define(
       allowNull: false,
       // allowNull defaults to true
     },
+    barcode: {
+      type: DataTypes.STRING(13),
+      allowNull: true,
+      unique: true,
+    },
   },
   {
     // Other model options go here

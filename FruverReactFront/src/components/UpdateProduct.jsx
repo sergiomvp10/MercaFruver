@@ -5,6 +5,7 @@ import { u1F4C4 } from "react-icons-kit/noto_emoji_regular/u1F4C4";
 import { u1F4B5 } from "react-icons-kit/noto_emoji_regular/u1F4B5";
 import { u1F4B0 } from "react-icons-kit/noto_emoji_regular/u1F4B0";
 import { u1F004 } from "react-icons-kit/noto_emoji_regular/u1F004";
+import { u1F4F1 } from "react-icons-kit/noto_emoji_regular/u1F4F1";
 import { useState } from "react";
 import { serviceUpdateProduct } from "@/services/productsApi";
 import Swal from "sweetalert2";
@@ -18,6 +19,7 @@ const UpdateProduct = ({
   price_purchase,
   price_sale,
   stock,
+  barcode,
 }) => {
   const [form, setForm] = useState({
     id,
@@ -26,6 +28,7 @@ const UpdateProduct = ({
     price_purchase,
     price_sale,
     stock,
+    barcode,
   });
 
   const handleForm = (e) => {
@@ -87,6 +90,13 @@ const UpdateProduct = ({
           onChange={handleForm}
           name="stock"
           value={form.stock}
+        />
+        <InputIcon
+          placeholder={"código de barras"}
+          icon={u1F4F1}
+          onChange={handleForm}
+          name="barcode"
+          value={form.barcode || ''}
         />
       </div>
       <div>
