@@ -49,7 +49,7 @@ export default function Home() {
       <div className="h-full flex flex-col relative">
         <div className="bg-cyan-400 p-4 text-center">
           <div className="flex flex-col items-center gap-2">
-            <img src="/images/logo.png" alt="MY FRUVER" className="h-40 w-auto object-contain" />
+            <img src="/images/logo.png" alt="MY FRUVER" className="h-16 w-auto object-contain" />
             <h1 className="font-bold text-2xl text-white">Inicio</h1>
           </div>
         </div>
