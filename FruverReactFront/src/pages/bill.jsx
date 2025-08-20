@@ -17,7 +17,7 @@ const Bill = () => {
   return (
     <div className="w-72 pr-2">
       <section className="w-4/5 flex flex-col justify-center items-center">
-        <img className="scale-150" src="/images/logo.jpg" alt="" />
+        <img className="scale-150" src="/images/logofactura.png" alt="" />
         <br />
         <br />
         <div className="font-bold text-2xl">Ticket Venta #{contextSale.sale}</div>
