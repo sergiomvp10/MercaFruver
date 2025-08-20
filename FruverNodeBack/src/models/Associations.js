@@ -13,3 +13,4 @@ Product.belongsToMany(Sale, {
 
 Role.belongsToMany(User, { through: "RoleUser" });
 User.hasMany(Sale);
+Sale.belongsTo(User);
