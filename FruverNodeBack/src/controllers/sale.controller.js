@@ -23,7 +23,13 @@ export const newSale = async (req, res, next) => {
 
     itemsSale.forEach(async (itemSale) => {
         console.log(itemSale)
-      await ItemSale.create({ ...itemSale, SaleId: sale.dataValues.id });
+      await ItemSale.create({ 
+        price_purchase: itemSale.price_purchase,
+        price_sale: itemSale.price_sale,
+        amount: itemSale.amount,
+        ProductId: itemSale.ProductId,
+        SaleId: sale.dataValues.id 
+      });
     });
     res.status(200).json(sale);
   } catch (error) {
