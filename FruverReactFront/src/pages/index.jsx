@@ -18,6 +18,18 @@ export default function Home() {
 
   const contextSale = useContext(SaleContext);
   const [searchValue,setSearchValue] = useState('')
+  const [barcodeInput, setBarcodeInput] = useState('')
+
+  const handleBarcodeInput = (e) => {
+    if (e.key === 'Enter') {
+      if (barcodeInput.length === 13) {
+        contextSale.addItemSaleByBarcode(barcodeInput);
+        setBarcodeInput('');
+      }
+    } else if (e.key.length === 1 && /\d/.test(e.key)) {
+      setBarcodeInput(prev => prev + e.key);
+    }
+  };
 
 
   console.log("Este es",contextSale)
@@ -29,6 +41,11 @@ export default function Home() {
 
   return (
     <Menu>
+      <input
+        style={{ position: 'absolute', left: '-9999px', opacity: 0 }}
+        onKeyDown={handleBarcodeInput}
+        autoFocus
+      />
       <div className="h-full flex flex-col relative">
         <div className="bg-cyan-400 p-4 text-center font-bold text-2xl">
           Inicio
@@ -60,6 +77,7 @@ export default function Home() {
                       price_sale={product.price_sale}
                       stock={product.stock}
                       price_purchase={product.price_purchase}
+                      barcode={product.barcode}
                       actions={{ input: true, edit: true }}
                       refetchingProducts={refetching}
                       onKeyDown={(e) =>
