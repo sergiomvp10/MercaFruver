@@ -82,17 +82,34 @@
 
 .react-datepicker__day-name {
   color: #6b7280;
-  font-size: 12px;
+  font-size: 0;
   font-weight: 600;
   text-align: center;
   width: 32px;
   padding: 4px 0;
+  position: relative;
+}
+
+.react-datepicker__day-name::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
+
+.react-datepicker__day-name:nth-child(1)::after { content: 'Dom'; }
+.react-datepicker__day-name:nth-child(2)::after { content: 'Lun'; }
+.react-datepicker__day-name:nth-child(3)::after { content: 'Mar'; }
+.react-datepicker__day-name:nth-child(4)::after { content: 'Mié'; }
+.react-datepicker__day-name:nth-child(5)::after { content: 'Jue'; }
+.react-datepicker__day-name:nth-child(6)::after { content: 'Vie'; }
+.react-datepicker__day-name:nth-child(7)::after { content: 'Sáb'; }
 
 .react-datepicker__week {
   display: flex;
