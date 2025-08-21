@@ -6,8 +6,8 @@ const Table = ({ headers, rows, pagination }) => {
       <table>
         <thead>
           <tr>
-            {headers.map((header) => (
-              <th>{header.name}</th>
+            {headers.map((header, index) => (
+              <th key={index}>{header.name}</th>
             ))}
           </tr>
         </thead>

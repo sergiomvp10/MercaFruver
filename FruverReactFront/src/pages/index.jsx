@@ -71,6 +71,7 @@ export default function Home() {
                   )
                   .map((product) => (
                     <ItemProduct
+                      key={product.id}
                       id={product.id}
                       name={product.name}
                       description={product.description}

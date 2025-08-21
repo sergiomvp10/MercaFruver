@@ -10,7 +10,7 @@ const Bill = () => {
   useEffect(() => {
     contextSale.setItemsSale([]);
     contextSale.pay == "" && contextSale.setPay(totalSale(items));
-  }, []);
+  }, [contextSale, items]);
   console.log(contextSale);
   console.log(items);
 
@@ -59,8 +59,8 @@ const Bill = () => {
               <div className="font-bold text-right">Total</div>
             </div>
           </li>
-          {items.map((item) => (
-            <li>
+          {items.map((item, index) => (
+            <li key={index}>
               <div className="grid grid-cols-3 gap-r align-middle">
                 <div className="">{item.name}</div>
                 <div className="text-center">{item.amount}</div>

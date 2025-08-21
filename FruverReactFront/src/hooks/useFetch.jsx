@@ -36,7 +36,7 @@ console.log({ endpoint, method, body });
         setData(res.data);
       })
       .catch((error) => setError(error)).finally(()=>setLoading(false))
-  }, []);
+  }, [endpoint, method, body]);
 
   return { data, refetching, error, loading };
 };
