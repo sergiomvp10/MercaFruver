@@ -22,7 +22,7 @@ export default function Home() {
 
   const handleBarcodeInput = (e) => {
     if (e.key === 'Enter') {
-      if (barcodeInput.length === 13) {
+      if (barcodeInput.length === 8 || barcodeInput.length === 13) {
         contextSale.addItemSaleByBarcode(barcodeInput);
         setBarcodeInput('');
       }
@@ -71,6 +71,7 @@ export default function Home() {
                   )
                   .map((product) => (
                     <ItemProduct
+                      key={product.id}
                       id={product.id}
                       name={product.name}
                       description={product.description}
