@@ -167,6 +167,47 @@ export const getMonthlySalesReport = async (req, res, next) => {
 
 const COLOMBIA_TIMEZONE = 'America/Bogota';
 
+const formatToColombiaDateLong = (dateStr) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr + 'T12:00:00Z');
+  return date.toLocaleDateString('es-CO', {
+    timeZone: COLOMBIA_TIMEZONE,
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+export const getSalesDaysList = async (req, res, next) => {
+  try {
+    const daysList = await sequelize.query(
+      `SELECT 
+        date(createdAt) as fecha,
+        sum(price_sale * amount) as total,
+        count(*) as totalItems,
+        count(DISTINCT SaleId) as totalVentas
+       FROM ItemSales
+       GROUP BY date(createdAt)
+       ORDER BY fecha DESC
+       LIMIT 30`,
+      {
+        type: sequelize.QueryTypes.SELECT
+      }
+    );
+
+    const daysWithFormat = daysList.map(day => ({
+      ...day,
+      fechaFormateada: formatToColombiaDateLong(day.fecha)
+    }));
+
+    res.status(200).json(daysWithFormat);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error al obtener lista de días con ventas" });
+  }
+};
+
 const formatToColombiaTime = (utcDateStr) => {
   if (!utcDateStr) return '';
   const date = new Date(utcDateStr + 'Z');
