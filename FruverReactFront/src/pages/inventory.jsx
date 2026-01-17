@@ -19,7 +19,9 @@ const Inventory = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [showIngreso, setShowIngreso] = useState(false);
   const [showSalida, setShowSalida] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productSearch, setProductSearch] = useState("");
+  const [showProductDropdown, setShowProductDropdown] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [processing, setProcessing] = useState(false);
 
@@ -44,18 +46,32 @@ const Inventory = () => {
     0
   );
 
+  const searchFilteredProducts = data && productSearch.length >= 3
+    ? data.filter(p => p.name.toLowerCase().includes(productSearch.toLowerCase())).slice(0, 5)
+    : [];
+
+  const handleProductSelect = (product) => {
+    setSelectedProduct(product);
+    setProductSearch(product.name);
+    setShowProductDropdown(false);
+  };
+
+  const handleProductSearchChange = (e) => {
+    setProductSearch(e.target.value);
+    setSelectedProduct(null);
+    setShowProductDropdown(e.target.value.length >= 3);
+  };
+
   const handleIngreso = async () => {
     if (!selectedProduct || !quantity || quantity <= 0) return;
     setProcessing(true);
     try {
-      const product = data.find(p => p.id === parseInt(selectedProduct));
-      if (product) {
-        const newStock = (product.stock || 0) + parseInt(quantity);
-        await axios.put(`${API}/products/${selectedProduct}`, { stock: newStock });
-        refetching();
-      }
+      const newStock = (selectedProduct.stock || 0) + parseInt(quantity);
+      await axios.put(`${API}/products/${selectedProduct.id}`, { stock: newStock });
+      refetching();
       setShowIngreso(false);
-      setSelectedProduct("");
+      setSelectedProduct(null);
+      setProductSearch("");
       setQuantity("");
     } catch (error) {
       console.error("Error al ingresar stock:", error);
@@ -67,14 +83,12 @@ const Inventory = () => {
     if (!selectedProduct || !quantity || quantity <= 0) return;
     setProcessing(true);
     try {
-      const product = data.find(p => p.id === parseInt(selectedProduct));
-      if (product) {
-        const newStock = Math.max(0, (product.stock || 0) - parseInt(quantity));
-        await axios.put(`${API}/products/${selectedProduct}`, { stock: newStock });
-        refetching();
-      }
+      const newStock = Math.max(0, (selectedProduct.stock || 0) - parseInt(quantity));
+      await axios.put(`${API}/products/${selectedProduct.id}`, { stock: newStock });
+      refetching();
       setShowSalida(false);
-      setSelectedProduct("");
+      setSelectedProduct(null);
+      setProductSearch("");
       setQuantity("");
     } catch (error) {
       console.error("Error al retirar stock:", error);
@@ -84,11 +98,17 @@ const Inventory = () => {
 
   const openIngreso = () => {
     setShowMenu(false);
+    setSelectedProduct(null);
+    setProductSearch("");
+    setQuantity("");
     setShowIngreso(true);
   };
 
   const openSalida = () => {
     setShowMenu(false);
+    setSelectedProduct(null);
+    setProductSearch("");
+    setQuantity("");
     setShowSalida(true);
   };
 
@@ -238,20 +258,40 @@ const Inventory = () => {
                 <h3 className="text-xl font-bold text-gray-800">Ingreso de Stock</h3>
               </div>
               <div className="space-y-4">
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Producto</label>
-                  <select
-                    value={selectedProduct}
-                    onChange={(e) => setSelectedProduct(e.target.value)}
+                  <input
+                    type="text"
+                    value={productSearch}
+                    onChange={handleProductSearchChange}
+                    onFocus={() => productSearch.length >= 3 && setShowProductDropdown(true)}
+                    placeholder="Escriba 3 letras para buscar..."
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  >
-                    <option value="">Seleccionar producto...</option>
-                    {data && data.map((product) => (
-                      <option key={product.id} value={product.id}>
-                        {product.name} (Stock actual: {product.stock || 0})
-                      </option>
-                    ))}
-                  </select>
+                  />
+                  {showProductDropdown && searchFilteredProducts.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {searchFilteredProducts.map((product) => (
+                        <button
+                          key={product.id}
+                          onClick={() => handleProductSelect(product)}
+                          className="w-full px-4 py-3 text-left hover:bg-green-50 border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="font-medium text-gray-800">{product.name}</div>
+                          <div className="text-sm text-gray-500">Stock actual: {product.stock || 0}</div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {productSearch.length >= 3 && searchFilteredProducts.length === 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-3 text-gray-500 text-center">
+                      No se encontraron productos
+                    </div>
+                  )}
+                  {selectedProduct && (
+                    <div className="mt-2 p-2 bg-green-50 rounded-lg text-sm text-green-700">
+                      Seleccionado: <strong>{selectedProduct.name}</strong> (Stock: {selectedProduct.stock || 0})
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Cantidad a ingresar</label>
@@ -267,7 +307,7 @@ const Inventory = () => {
               </div>
               <div className="flex gap-3 mt-6">
                 <button
-                  onClick={() => { setShowIngreso(false); setSelectedProduct(""); setQuantity(""); }}
+                  onClick={() => { setShowIngreso(false); setSelectedProduct(null); setProductSearch(""); setQuantity(""); }}
                   className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition font-medium"
                   disabled={processing}
                 >
@@ -304,20 +344,40 @@ const Inventory = () => {
                 <h3 className="text-xl font-bold text-gray-800">Salida de Stock</h3>
               </div>
               <div className="space-y-4">
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Producto</label>
-                  <select
-                    value={selectedProduct}
-                    onChange={(e) => setSelectedProduct(e.target.value)}
+                  <input
+                    type="text"
+                    value={productSearch}
+                    onChange={handleProductSearchChange}
+                    onFocus={() => productSearch.length >= 3 && setShowProductDropdown(true)}
+                    placeholder="Escriba 3 letras para buscar..."
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  >
-                    <option value="">Seleccionar producto...</option>
-                    {data && data.map((product) => (
-                      <option key={product.id} value={product.id}>
-                        {product.name} (Stock actual: {product.stock || 0})
-                      </option>
-                    ))}
-                  </select>
+                  />
+                  {showProductDropdown && searchFilteredProducts.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {searchFilteredProducts.map((product) => (
+                        <button
+                          key={product.id}
+                          onClick={() => handleProductSelect(product)}
+                          className="w-full px-4 py-3 text-left hover:bg-red-50 border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="font-medium text-gray-800">{product.name}</div>
+                          <div className="text-sm text-gray-500">Stock actual: {product.stock || 0}</div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {productSearch.length >= 3 && searchFilteredProducts.length === 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-3 text-gray-500 text-center">
+                      No se encontraron productos
+                    </div>
+                  )}
+                  {selectedProduct && (
+                    <div className="mt-2 p-2 bg-red-50 rounded-lg text-sm text-red-700">
+                      Seleccionado: <strong>{selectedProduct.name}</strong> (Stock: {selectedProduct.stock || 0})
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Cantidad a retirar</label>
@@ -333,7 +393,7 @@ const Inventory = () => {
               </div>
               <div className="flex gap-3 mt-6">
                 <button
-                  onClick={() => { setShowSalida(false); setSelectedProduct(""); setQuantity(""); }}
+                  onClick={() => { setShowSalida(false); setSelectedProduct(null); setProductSearch(""); setQuantity(""); }}
                   className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition font-medium"
                   disabled={processing}
                 >
