@@ -183,12 +183,12 @@ export const getSalesDaysList = async (req, res, next) => {
   try {
     const daysList = await sequelize.query(
       `SELECT 
-        date(createdAt) as fecha,
+        date(datetime(createdAt, '-5 hours')) as fecha,
         sum(price_sale * amount) as total,
         count(*) as totalItems,
         count(DISTINCT SaleId) as totalVentas
        FROM ItemSales
-       GROUP BY date(createdAt)
+       GROUP BY date(datetime(createdAt, '-5 hours'))
        ORDER BY fecha DESC
        LIMIT 30`,
       {
@@ -247,8 +247,8 @@ export const getSalesWithDetails = async (req, res, next) => {
         datetime(i.createdAt) as fechaHora
        FROM ItemSales i
        LEFT JOIN Products p ON i.ProductId = p.id
-       WHERE date(i.createdAt) = date(:targetDate)
-       ORDER BY i.createdAt DESC`,
+       WHERE date(datetime(i.createdAt, '-5 hours')) = date(:targetDate)
+       ORDER BY datetime(i.createdAt, '-5 hours') DESC`,
       {
         replacements: { targetDate },
         type: sequelize.QueryTypes.SELECT
@@ -264,7 +264,7 @@ export const getSalesWithDetails = async (req, res, next) => {
     const total = await sequelize.query(
       `SELECT sum(price_sale * amount) as total, count(*) as totalItems, count(DISTINCT SaleId) as totalVentas
        FROM ItemSales 
-       WHERE date(createdAt) = date(:targetDate)`,
+       WHERE date(datetime(createdAt, '-5 hours')) = date(:targetDate)`,
       {
         replacements: { targetDate },
         type: sequelize.QueryTypes.SELECT
