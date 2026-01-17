@@ -32,14 +32,6 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale }) => {
   const totalPaid = calculateTotalPaid();
   const change = totalPaid - total;
 
-  const handleDenominationChange = (denom, value) => {
-    const count = parseInt(value) || 0;
-    setDenominationCounts(prev => ({
-      ...prev,
-      [denom]: count
-    }));
-  };
-
   const incrementDenomination = (denom) => {
     setDenominationCounts(prev => ({
       ...prev,
@@ -158,24 +150,15 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale }) => {
 
             <div className="space-y-2 mb-4">
               <p className="font-semibold text-gray-700 mb-2">Denominaciones:</p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {DENOMINATIONS.map((denom) => (
-                  <div key={denom} className="flex items-center gap-2 bg-gray-50 rounded-lg p-2">
-                    <button
-                      onClick={() => incrementDenomination(denom)}
-                      className="bg-cyan-500 text-white px-3 py-1 rounded font-bold hover:bg-cyan-600 transition text-sm"
-                    >
-                      {moneyFormat(denom)}
-                    </button>
-                    <input
-                      type="number"
-                      min="0"
-                      value={denominationCounts[denom] || ''}
-                      onChange={(e) => handleDenominationChange(denom, e.target.value)}
-                      className="w-16 p-1 border border-gray-300 rounded text-center"
-                      placeholder="0"
-                    />
-                  </div>
+                  <button
+                    key={denom}
+                    onClick={() => incrementDenomination(denom)}
+                    className="bg-cyan-500 text-white px-3 py-2 rounded font-bold hover:bg-cyan-600 transition text-sm"
+                  >
+                    {moneyFormat(denom)}
+                  </button>
                 ))}
               </div>
             </div>

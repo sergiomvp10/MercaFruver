@@ -95,7 +95,7 @@ export default function Home() {
             </div>
           </div>
           <div className="w-80 flex-shrink-0 h-full">
-            <Sale itemsSale={contextSale.itemsSale} deleteItemSale={contextSale.deleteItemSale} setPay={contextSale.setPay} setSale={contextSale.setSale}></Sale>
+            <Sale itemsSale={contextSale.itemsSale} deleteItemSale={contextSale.deleteItemSale} setPay={contextSale.setPay} setSale={contextSale.setSale} clearSale={() => contextSale.setItemsSale([])}></Sale>
           </div>
         </div>
       </div>
