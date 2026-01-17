@@ -5,6 +5,14 @@ import { moneyFormat } from "@/utilities/formats";
 
 const API = process.env.NEXT_PUBLIC_API || "http://localhost:4000/api";
 
+const getColombiaDate = () => {
+  const now = new Date();
+  const colombiaOffset = -5 * 60;
+  const utcOffset = now.getTimezoneOffset();
+  const colombiaTime = new Date(now.getTime() + (utcOffset + colombiaOffset) * 60000);
+  return colombiaTime.toISOString().split('T')[0];
+};
+
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -22,7 +30,7 @@ const Expenses = () => {
     description: "",
     amount: "",
     category: "General",
-    date: new Date().toISOString().split('T')[0]
+    date: getColombiaDate()
   });
 
   const fetchExpenses = async () => {
@@ -75,7 +83,7 @@ const Expenses = () => {
         description: "",
         amount: "",
         category: "General",
-        date: new Date().toISOString().split('T')[0]
+        date: getColombiaDate()
       });
       fetchAll();
     } catch (error) {

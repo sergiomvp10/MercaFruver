@@ -2,6 +2,26 @@ import { Expense } from "../models/Expense.js";
 import { Op } from "sequelize";
 import { sequelize } from "../database/database.js";
 
+const getColombiaDate = () => {
+  const now = new Date();
+  const colombiaOffset = -5 * 60;
+  const utcOffset = now.getTimezoneOffset();
+  const colombiaTime = new Date(now.getTime() + (utcOffset + colombiaOffset) * 60000);
+  return colombiaTime.toISOString().split('T')[0];
+};
+
+const getColombiaMonth = () => {
+  const now = new Date();
+  const colombiaOffset = -5 * 60;
+  const utcOffset = now.getTimezoneOffset();
+  const colombiaTime = new Date(now.getTime() + (utcOffset + colombiaOffset) * 60000);
+  const year = colombiaTime.getFullYear();
+  const month = colombiaTime.getMonth();
+  const startOfMonth = new Date(year, month, 1).toISOString().split('T')[0];
+  const endOfMonth = new Date(year, month + 1, 0).toISOString().split('T')[0];
+  return { startOfMonth, endOfMonth };
+};
+
 export const getExpenses = async (req, res, next) => {
   try {
     const expenses = await Expense.findAll({
@@ -21,7 +41,7 @@ export const createExpense = async (req, res, next) => {
       description,
       amount,
       category: category || "General",
-      date: date || new Date().toISOString().split('T')[0],
+      date: date || getColombiaDate(),
     });
     res.status(200).json(expense);
   } catch (error) {
@@ -85,10 +105,8 @@ export const getExpensesByDateRange = async (req, res, next) => {
 
 export const getExpensesSummary = async (req, res, next) => {
   try {
-    const today = new Date();
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
-    const todayStr = today.toISOString().split('T')[0];
+    const todayStr = getColombiaDate();
+    const { startOfMonth, endOfMonth } = getColombiaMonth();
 
     const totalToday = await sequelize.query(
       `SELECT COALESCE(SUM(amount), 0) as total FROM Expenses WHERE date = :today`,
