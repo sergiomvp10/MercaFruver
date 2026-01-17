@@ -5,6 +5,7 @@ import { cube } from "react-icons-kit/fa/cube";
 import { home } from "react-icons-kit/fa/home";
 import { navicon } from "react-icons-kit/fa/navicon";
 import { barChart } from "react-icons-kit/fa/barChart";
+import { archive } from "react-icons-kit/fa/archive";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,6 +13,7 @@ import { useRouter } from "next/router";
 const routes = {
   home: "/",
   products: "/products",
+  inventory: "/inventory",
   sales: "/sales",
   reports: "/reports",
 };
@@ -59,6 +61,13 @@ const Menu = (props) => {
               <div className={isActive(routes.products) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
                 <MenuButton fullContent={showMenu} icon={cube}>
                   Productos
+                </MenuButton>
+              </div>
+            </Link>
+            <Link href={routes.inventory}>
+              <div className={isActive(routes.inventory) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
+                <MenuButton fullContent={showMenu} icon={archive}>
+                  Inventario
                 </MenuButton>
               </div>
             </Link>
