@@ -55,7 +55,7 @@ const Products = () => {
         <div className="bg-lime-400 p-4 text-center font-bold text-2xl">
           Productos
         </div>
-        <div className="h-full grid gap-10 place-content-center">
+        <div className="flex-1 flex flex-col gap-4 p-4">
           <div className="bg-lime-400 p-3 rounded-lg">
             <InputIcon
               value={searchValue}
@@ -64,7 +64,7 @@ const Products = () => {
               onChange={handleSearch}
             ></InputIcon>
           </div>
-          <div className="flex flex-col gap-2 overflow-y-scroll max-h-128 bg-lime-400 p-5 rounded-lg">
+          <div className="flex-1 flex flex-col gap-2 overflow-y-auto bg-lime-400 p-5 rounded-lg">
             {!loading && data &&
               data
                 .filter(
