@@ -38,6 +38,20 @@ export default function Home() {
     console.log(e.target.value)
   }
 
+  const handleAddItem = (e, product) => {
+    if (e.key === 'Enter') {
+      contextSale.addItemSale(
+        e,
+        product.name,
+        product.price_purchase,
+        product.price_sale,
+        e.target.value,
+        product.id
+      );
+      setSearchValue('');
+    }
+  }
+
 
   return (
     <Menu>
@@ -80,16 +94,7 @@ export default function Home() {
                       barcode={product.barcode}
                       actions={{ input: true, edit: true }}
                       refetchingProducts={refetching}
-                      onKeyDown={(e) =>
-                        contextSale.addItemSale(
-                          e,
-                          product.name,
-                          product.price_purchase,
-                          product.price_sale,
-                          e.target.value,
-                          product.id
-                        )
-                      }
+                      onKeyDown={(e) => handleAddItem(e, product)}
                     ></ItemProduct>
                   ))}
             </div>
