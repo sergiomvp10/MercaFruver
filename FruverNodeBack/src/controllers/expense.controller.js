@@ -7,7 +7,10 @@ const getColombiaDate = () => {
   const colombiaOffset = -5 * 60;
   const utcOffset = now.getTimezoneOffset();
   const colombiaTime = new Date(now.getTime() + (utcOffset + colombiaOffset) * 60000);
-  return colombiaTime.toISOString().split('T')[0];
+  const year = colombiaTime.getFullYear();
+  const month = String(colombiaTime.getMonth() + 1).padStart(2, '0');
+  const day = String(colombiaTime.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 const getColombiaMonth = () => {
@@ -17,8 +20,9 @@ const getColombiaMonth = () => {
   const colombiaTime = new Date(now.getTime() + (utcOffset + colombiaOffset) * 60000);
   const year = colombiaTime.getFullYear();
   const month = colombiaTime.getMonth();
-  const startOfMonth = new Date(year, month, 1).toISOString().split('T')[0];
-  const endOfMonth = new Date(year, month + 1, 0).toISOString().split('T')[0];
+  const startOfMonth = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const endOfMonth = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
   return { startOfMonth, endOfMonth };
 };
 
