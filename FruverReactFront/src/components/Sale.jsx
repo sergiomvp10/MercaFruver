@@ -7,7 +7,7 @@ import { serviceMakeSale } from "@/services/productsApi";
 
 const DENOMINATIONS = [100000, 50000, 20000, 10000, 5000, 2000, 1000];
 
-const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale }) => {
+const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleComplete }) => {
   const [valuePay, setValuePay] = useState();
   const [showPayModal, setShowPayModal] = useState(false);
   const [denominationCounts, setDenominationCounts] = useState({});
@@ -75,6 +75,9 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale }) => {
     setDenominationCounts({});
     if (clearSale) {
       clearSale();
+    }
+    if (onSaleComplete) {
+      onSaleComplete();
     }
   };
 
