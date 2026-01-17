@@ -35,7 +35,7 @@ export const newSale = async (req, res, next) => {
         if (product) {
           productNames.push(product.name);
           const newStock = (product.stock || 0) - (itemSale.amount || 0);
-          await product.update({ stock: Math.max(0, newStock) });
+          await product.update({ stock: newStock });
         } else {
           productNames.push('Producto desconocido');
         }
