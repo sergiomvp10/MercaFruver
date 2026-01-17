@@ -40,7 +40,7 @@ export const createExpense = async (req, res, next) => {
     const expense = await Expense.create({
       description,
       amount,
-      category: category || "General",
+      category: category || "Servicios",
       date: date || getColombiaDate(),
     });
     res.status(200).json(expense);
@@ -156,13 +156,13 @@ export const getCategories = async (req, res, next) => {
       }
     );
     const defaultCategories = [
-      "General",
       "Servicios",
       "Transporte",
       "Alimentos",
-      "Suministros",
+      "Proveedores",
       "Mantenimiento",
       "Salarios",
+      "Cambios",
       "Otros"
     ];
     const existingCategories = categories.map(c => c.category);

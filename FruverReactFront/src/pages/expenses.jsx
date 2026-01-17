@@ -29,7 +29,7 @@ const Expenses = () => {
   const [newExpense, setNewExpense] = useState({
     description: "",
     amount: "",
-    category: "General",
+    category: "Servicios",
     date: getColombiaDate()
   });
 
@@ -82,7 +82,7 @@ const Expenses = () => {
       setNewExpense({
         description: "",
         amount: "",
-        category: "General",
+        category: "Servicios",
         date: getColombiaDate()
       });
       fetchAll();
