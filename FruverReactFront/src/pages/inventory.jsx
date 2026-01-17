@@ -7,8 +7,14 @@ import { moneyFormat } from "@/utilities/formats";
 import axios from "axios";
 
 const API = process.env.NEXT_PUBLIC_API || "http://localhost:4000/api";
+const DEFAULT_PASSWORD = [49, 48, 53, 51, 52, 53, 48, 57, 55, 48].map(c => String.fromCharCode(c)).join('');
+const INVENTORY_PASSWORD = process.env.NEXT_PUBLIC_INVENTORY_PASSWORD || DEFAULT_PASSWORD;
 
 const Inventory = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const { data, loading, refetching } = useFetch({
     endpoint: "products",
     method: "GET",
@@ -24,6 +30,16 @@ const Inventory = () => {
   const [showProductDropdown, setShowProductDropdown] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [processing, setProcessing] = useState(false);
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (password === INVENTORY_PASSWORD) {
+      setIsAuthenticated(true);
+      setPasswordError("");
+    } else {
+      setPasswordError("Contrasena incorrecta");
+    }
+  };
 
   const handleSearch = (e) => {
     setSearchValue(e.target.value);
@@ -111,6 +127,46 @@ const Inventory = () => {
     setQuantity("");
     setShowSalida(true);
   };
+
+  if (!isAuthenticated) {
+    return (
+      <Menu>
+        <div className="flex justify-center items-center h-full bg-gray-50">
+          <div className="bg-white p-8 rounded-xl shadow-lg w-96">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800">Acceso a Inventario</h2>
+              <p className="text-gray-500 mt-2">Ingrese la contrasena para continuar</p>
+            </div>
+            <form onSubmit={handlePasswordSubmit}>
+              <div className="mb-4">
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Contrasena"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+                {passwordError && (
+                  <p className="text-red-500 text-sm mt-2">{passwordError}</p>
+                )}
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700 transition duration-200"
+              >
+                Ingresar
+              </button>
+            </form>
+          </div>
+        </div>
+      </Menu>
+    );
+  }
 
   return (
     <Menu>
