@@ -130,8 +130,8 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
       </div>
 
       {showPayModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 w-full h-full max-h-[90vh] shadow-2xl flex flex-col">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-1/2 max-h-[80vh] shadow-2xl flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-gray-800">Calcular Pago</h3>
               <button
