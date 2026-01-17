@@ -36,6 +36,15 @@ const formatTime = (date) => {
   });
 };
 
+const formatDate = (date) => {
+  return date.toLocaleDateString('es-CO', { 
+    timeZone: COLOMBIA_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+};
+
 const formatMoney = (value) => {
   return new Intl.NumberFormat('es-CO', {
     style: 'currency',

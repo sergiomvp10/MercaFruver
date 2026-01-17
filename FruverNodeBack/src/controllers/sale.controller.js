@@ -179,6 +179,17 @@ const formatToColombiaTime = (utcDateStr) => {
   });
 };
 
+const formatToColombiaDate = (utcDateStr) => {
+  if (!utcDateStr) return '';
+  const date = new Date(utcDateStr + 'Z');
+  return date.toLocaleDateString('es-CO', {
+    timeZone: COLOMBIA_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+};
+
 export const getSalesWithDetails = async (req, res, next) => {
   try {
     const { date } = req.query;
@@ -205,7 +216,8 @@ export const getSalesWithDetails = async (req, res, next) => {
 
     const salesWithColombiaTime = salesDetails.map(sale => ({
       ...sale,
-      hora: formatToColombiaTime(sale.fechaHora)
+      hora: formatToColombiaTime(sale.fechaHora),
+      fechaVenta: formatToColombiaDate(sale.fechaHora)
     }));
 
     const total = await sequelize.query(

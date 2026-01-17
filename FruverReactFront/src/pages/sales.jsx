@@ -146,6 +146,7 @@ const Sales = () => {
                     <table className="w-full">
                       <thead className="bg-gray-50">
                         <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hora</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Producto</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cantidad</th>
@@ -157,6 +158,9 @@ const Sales = () => {
                       <tbody className="divide-y divide-gray-200">
                         {salesData.detalles.map((item, index) => (
                           <tr key={index} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {item.fechaVenta}
+                            </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                               {formatTime(item.hora)}
                             </td>
