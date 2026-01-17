@@ -1,7 +1,9 @@
 import { where, Op } from "sequelize";
 import { ItemSale } from "../models/ItemSale.js";
 import { Sale } from "../models/Sale.js";
+import { Product } from "../models/Product.js";
 import { sequelize } from "../database/database.js";
+import { logSale, initDailyLog } from "../utils/salesLogger.js";
 
 export const getSales = async (req, res, next) => {
   try {
@@ -21,10 +23,23 @@ export const newSale = async (req, res, next) => {
       UserId: userId
     });
 
-    itemsSale.forEach(async (itemSale) => {
-        console.log(itemSale)
+    initDailyLog();
+
+    const productNames = [];
+    for (const itemSale of itemsSale) {
+      console.log(itemSale);
       await ItemSale.create({ ...itemSale, SaleId: sale.dataValues.id });
-    });
+      
+      if (itemSale.ProductId) {
+        const product = await Product.findByPk(itemSale.ProductId);
+        productNames.push(product ? product.name : 'Producto desconocido');
+      } else {
+        productNames.push('Producto desconocido');
+      }
+    }
+
+    await logSale(sale.dataValues.id, itemsSale, productNames);
+
     res.status(200).json(sale);
   } catch (error) {
     console.log(error);
@@ -147,6 +162,54 @@ export const getMonthlySalesReport = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: "Error al obtener reporte mensual" });
+  }
+};
+
+export const getSalesWithDetails = async (req, res, next) => {
+  try {
+    const { date } = req.query;
+    const targetDate = date || new Date().toISOString().split('T')[0];
+
+    const salesDetails = await sequelize.query(
+      `SELECT 
+        i.id,
+        i.SaleId,
+        p.name as producto,
+        i.amount as cantidad,
+        i.price_sale as precioVenta,
+        (i.price_sale * i.amount) as subtotal,
+        time(i.createdAt) as hora,
+        datetime(i.createdAt) as fechaHora
+       FROM ItemSales i
+       LEFT JOIN Products p ON i.ProductId = p.id
+       WHERE date(i.createdAt) = date(:targetDate)
+       ORDER BY i.createdAt DESC`,
+      {
+        replacements: { targetDate },
+        type: sequelize.QueryTypes.SELECT
+      }
+    );
+
+    const total = await sequelize.query(
+      `SELECT sum(price_sale * amount) as total, count(*) as totalItems, count(DISTINCT SaleId) as totalVentas
+       FROM ItemSales 
+       WHERE date(createdAt) = date(:targetDate)`,
+      {
+        replacements: { targetDate },
+        type: sequelize.QueryTypes.SELECT
+      }
+    );
+
+    res.status(200).json({
+      fecha: targetDate,
+      total: total[0]?.total || 0,
+      totalItems: total[0]?.totalItems || 0,
+      totalVentas: total[0]?.totalVentas || 0,
+      detalles: salesDetails
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error al obtener detalles de ventas" });
   }
 };
 
