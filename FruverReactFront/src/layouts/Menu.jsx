@@ -2,55 +2,92 @@ import MenuButton from "@/components/MenuButton";
 import React, { useState } from "react";
 import { cartPlus } from "react-icons-kit/fa/cartPlus";
 import { cube } from "react-icons-kit/fa/cube";
-import { circleO } from "react-icons-kit/fa/circleO";
+import { home } from "react-icons-kit/fa/home";
 import { navicon } from "react-icons-kit/fa/navicon";
+import { barChart } from "react-icons-kit/fa/barChart";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const routes = {
   home: "/",
   products: "/products",
   sales: "/sales",
+  reports: "/reports",
 };
 
 const Menu = (props) => {
   const [showMenu, setShowMenu] = useState(true);
+  const router = useRouter();
+
+  const isActive = (path) => router.pathname === path;
 
   return (
     <div className="flex h-screen">
-      <div
-        className={`flex flex-col bg-cyan-700 ${
-          showMenu ? "w-60" : "w-auto"
-        } h-full`}
+      <motion.div
+        initial={{ width: showMenu ? 240 : "auto" }}
+        animate={{ width: showMenu ? 240 : "auto" }}
+        transition={{ duration: 0.3 }}
+        className="flex flex-col bg-gradient-to-b from-cyan-700 to-cyan-800 h-full shadow-lg"
       >
-        <div className="justify-self-center w-full">
+        <div className="flex items-center justify-between p-4 border-b border-cyan-600">
+          {showMenu && (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-white font-bold text-lg"
+            >
+              MercaFruver
+            </motion.span>
+          )}
           <MenuButton
             icon={navicon}
             onClick={() => setShowMenu(!showMenu)}
           ></MenuButton>
         </div>
 
-        <div className="flex flex-col justify-center h-full">
-          <div>
+        <nav className="flex flex-col flex-1 py-4">
+          <div className="space-y-1">
             <Link href={routes.home}>
-              <MenuButton fullContent={showMenu} icon={circleO}>
-                Inicio
-              </MenuButton>
+              <div className={isActive(routes.home) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
+                <MenuButton fullContent={showMenu} icon={home}>
+                  Inicio
+                </MenuButton>
+              </div>
             </Link>
             <Link href={routes.products}>
-              <MenuButton fullContent={showMenu} icon={cube}>
-                Productos
-              </MenuButton>
+              <div className={isActive(routes.products) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
+                <MenuButton fullContent={showMenu} icon={cube}>
+                  Productos
+                </MenuButton>
+              </div>
             </Link>
             <Link href={routes.sales}>
-              <MenuButton fullContent={showMenu} icon={cartPlus}>
-                Ventas
-              </MenuButton>
+              <div className={isActive(routes.sales) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
+                <MenuButton fullContent={showMenu} icon={cartPlus}>
+                  Ventas
+                </MenuButton>
+              </div>
+            </Link>
+            <Link href={routes.reports}>
+              <div className={isActive(routes.reports) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
+                <MenuButton fullContent={showMenu} icon={barChart}>
+                  Reportes
+                </MenuButton>
+              </div>
             </Link>
           </div>
-        </div>
-      </div>
-      <div className=" flex-1 bg-red-50">{props.children}</div>
+        </nav>
+
+        {showMenu && (
+          <div className="p-4 border-t border-cyan-600">
+            <p className="text-cyan-200 text-xs text-center">
+              Sistema de Ventas
+            </p>
+          </div>
+        )}
+      </motion.div>
+      <div className="flex-1 bg-gray-50 overflow-auto">{props.children}</div>
     </div>
   );
 };
