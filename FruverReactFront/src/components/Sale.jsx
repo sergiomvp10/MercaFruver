@@ -15,11 +15,11 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale }) => {
   };
 
   return (
-    <div className="bg-cyan-600 p-4 rounded-lg w-96 flex flex-col justify-between h-138 gap-10">
+    <div className="bg-cyan-600 p-4 rounded-lg w-full h-full flex flex-col justify-between gap-4">
       <div className="bg-cyan-300 rounded-lg w-full p-2 py-4 text-center font-bold text-lg">
         Venta
       </div>
-      <div className="items overflow-y-scroll flex flex-col gap-2">
+      <div className="items flex-1 overflow-y-auto flex flex-col gap-2">
         {itemsSale.map((item, index) => (
           <ItemSale
             key={index}

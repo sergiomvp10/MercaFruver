@@ -50,8 +50,8 @@ export default function Home() {
         <div className="bg-cyan-400 p-4 text-center font-bold text-2xl">
           Inicio
         </div>
-        <div className="flex h-full w-full justify-evenly">
-          <div className="h-full grid gap-10 place-content-center">
+        <div className="flex flex-1 w-full gap-4 p-4">
+          <div className="flex-1 flex flex-col gap-4">
             <div className="bg-lime-400 p-3 rounded-lg">
               <InputIcon
                 value={searchValue}
@@ -60,7 +60,7 @@ export default function Home() {
                 onChange={handleSearch}
               ></InputIcon>
             </div>
-            <div className="flex flex-col gap-2 overflow-y-scroll max-h-128 bg-lime-400 p-5 rounded-lg">
+            <div className="flex-1 flex flex-col gap-2 overflow-y-auto bg-lime-400 p-5 rounded-lg">
               {!loading && data &&
                 data
                   .filter(
@@ -94,7 +94,7 @@ export default function Home() {
                   ))}
             </div>
           </div>
-          <div className="grid place-content-center">
+          <div className="w-80 flex-shrink-0 h-full">
             <Sale itemsSale={contextSale.itemsSale} deleteItemSale={contextSale.deleteItemSale} setPay={contextSale.setPay} setSale={contextSale.setSale}></Sale>
           </div>
         </div>
