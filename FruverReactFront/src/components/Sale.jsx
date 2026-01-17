@@ -7,10 +7,13 @@ import { serviceMakeSale } from "@/services/productsApi";
 
 const DENOMINATIONS = [100000, 50000, 20000, 10000, 5000, 2000, 1000];
 
-const Sale = ({ itemsSale, deleteItemSale, setPay, setSale }) => {
+const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale }) => {
   const [valuePay, setValuePay] = useState();
   const [showPayModal, setShowPayModal] = useState(false);
   const [denominationCounts, setDenominationCounts] = useState({});
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationData, setConfirmationData] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const checkPay = async () => {
     const sale = await serviceMakeSale(itemsSale,1)
@@ -49,9 +52,38 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale }) => {
     setShowPayModal(true);
   };
 
-  const confirmPayment = () => {
-    setValuePay(totalPaid);
-    setShowPayModal(false);
+  const confirmPayment = async () => {
+    if (itemsSale.length === 0) return;
+    
+    setIsProcessing(true);
+    try {
+      const sale = await serviceMakeSale(itemsSale, 1);
+      setValuePay(totalPaid);
+      setPay(totalPaid);
+      setSale(sale.id);
+      
+      setConfirmationData({
+        total: total,
+        paid: totalPaid,
+        change: change
+      });
+      
+      setShowPayModal(false);
+      setShowConfirmation(true);
+    } catch (error) {
+      console.error('Error al registrar la venta:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const closeConfirmation = () => {
+    setShowConfirmation(false);
+    setConfirmationData(null);
+    setDenominationCounts({});
+    if (clearSale) {
+      clearSale();
+    }
   };
 
   return (
@@ -176,16 +208,54 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale }) => {
               </button>
               <button
                 onClick={confirmPayment}
-                disabled={totalPaid < total}
+                disabled={totalPaid < total || isProcessing || itemsSale.length === 0}
                 className={`flex-1 px-4 py-2 rounded-lg font-medium transition ${
-                  totalPaid >= total
+                  totalPaid >= total && !isProcessing && itemsSale.length > 0
                     ? 'bg-green-500 text-white hover:bg-green-600'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                Confirmar
+                {isProcessing ? 'Procesando...' : 'Confirmar'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showConfirmation && confirmationData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Venta Registrada</h3>
+            <p className="text-gray-600 mb-4">La venta se ha registrado exitosamente y el stock ha sido actualizado.</p>
+            
+            <div className="bg-gray-100 rounded-lg p-4 space-y-2 text-left mb-4">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Total de la venta:</span>
+                <span className="font-bold">{moneyFormat(confirmationData.total)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Pago recibido:</span>
+                <span className="font-bold text-green-600">{moneyFormat(confirmationData.paid)}</span>
+              </div>
+              <hr className="border-gray-300" />
+              <div className="flex justify-between text-lg">
+                <span className="font-semibold">Cambio a entregar:</span>
+                <span className="font-bold text-cyan-600">{moneyFormat(confirmationData.change)}</span>
+              </div>
+            </div>
+            
+            <button
+              onClick={closeConfirmation}
+              className="w-full px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition"
+            >
+              Aceptar
+            </button>
           </div>
         </div>
       )}
