@@ -231,6 +231,50 @@ const formatToColombiaDate = (utcDateStr) => {
   });
 };
 
+export const deleteSalesByDate = async (req, res, next) => {
+  try {
+    const { date } = req.query;
+    if (!date) {
+      return res.status(400).json({ message: "Se requiere una fecha" });
+    }
+
+    const saleIds = await sequelize.query(
+      `SELECT DISTINCT SaleId FROM ItemSales WHERE date(datetime(createdAt, '-5 hours')) = date(:date)`,
+      {
+        replacements: { date },
+        type: sequelize.QueryTypes.SELECT
+      }
+    );
+
+    if (saleIds.length === 0) {
+      return res.status(404).json({ message: "No hay ventas para esta fecha" });
+    }
+
+    const ids = saleIds.map(s => s.SaleId);
+
+    await ItemSale.destroy({
+      where: {
+        SaleId: {
+          [Op.in]: ids
+        }
+      }
+    });
+
+    await Sale.destroy({
+      where: {
+        id: {
+          [Op.in]: ids
+        }
+      }
+    });
+
+    res.status(200).json({ message: "Ventas eliminadas correctamente", deletedSales: ids.length });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error al eliminar ventas" });
+  }
+};
+
 export const getSalesWithDetails = async (req, res, next) => {
   try {
     const { date } = req.query;

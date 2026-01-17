@@ -16,6 +16,8 @@ const Sales = () => {
   const [selectedDay, setSelectedDay] = useState(null);
   const [dayDetails, setDayDetails] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
@@ -65,6 +67,30 @@ const Sales = () => {
   const handleBackToList = () => {
     setSelectedDay(null);
     setDayDetails(null);
+  };
+
+  const handleDeleteClick = (e, day) => {
+    e.stopPropagation();
+    setDeleteConfirm(day);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm) return;
+    setDeleting(true);
+    try {
+      await axios.delete(`${API}/sales/by-date`, {
+        params: { date: deleteConfirm.fecha }
+      });
+      setDaysList(daysList.filter(d => d.fecha !== deleteConfirm.fecha));
+      setDeleteConfirm(null);
+    } catch (error) {
+      console.error("Error deleting sales:", error);
+    }
+    setDeleting(false);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm(null);
   };
 
   const formatDateForName = (fecha) => {
@@ -228,7 +254,6 @@ const Sales = () => {
             </div>
           ) : daysList.length > 0 ? (
             <div className="space-y-3">
-              <p className="text-gray-600 mb-4">Doble clic en un item para ver el detalle de ventas del dia</p>
               {daysList.map((day, index) => (
                 <div
                   key={index}
@@ -249,9 +274,20 @@ const Sales = () => {
                         <p className="text-gray-500 text-sm">{day.fechaFormateada}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-green-600">{moneyFormat(day.total || 0)}</p>
-                      <p className="text-gray-500 text-sm">{day.totalVentas} ventas - {day.totalItems} productos</p>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-green-600">{moneyFormat(day.total || 0)}</p>
+                        <p className="text-gray-500 text-sm">{day.totalVentas} ventas - {day.totalItems} productos</p>
+                      </div>
+                      <button
+                        onClick={(e) => handleDeleteClick(e, day)}
+                        className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition"
+                        title="Eliminar reporte"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -266,6 +302,47 @@ const Sales = () => {
             </div>
           )}
         </div>
+
+        {deleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">Eliminar Reporte</h3>
+                <p className="text-gray-600 mb-6">
+                  Esta seguro que desea eliminar <span className="font-semibold">VENTA_DETALLADA_{formatDateForName(deleteConfirm.fecha)}</span>? Esta accion no se puede deshacer.
+                </p>
+                <div className="flex gap-3 justify-center">
+                  <button
+                    onClick={handleDeleteCancel}
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+                    disabled={deleting}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleDeleteConfirm}
+                    className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2"
+                    disabled={deleting}
+                  >
+                    {deleting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Eliminando...
+                      </>
+                    ) : (
+                      'Eliminar'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Menu>
   );

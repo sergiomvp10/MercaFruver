@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getSales, newSale, totalDaySale, getSalesByDateRange, getDailySalesReport, getMonthlySalesReport, getSalesWithDetails, getSalesDaysList } from "../controllers/sale.controller.js";
+import { getSales, newSale, totalDaySale, getSalesByDateRange, getDailySalesReport, getMonthlySalesReport, getSalesWithDetails, getSalesDaysList, deleteSalesByDate } from "../controllers/sale.controller.js";
 
 export const salesController = new Router();
 
@@ -11,3 +11,4 @@ salesController.get("/reports/range", getSalesByDateRange);
 salesController.get("/reports/daily", getDailySalesReport);
 salesController.get("/reports/monthly", getMonthlySalesReport);
 salesController.post("/", newSale);
+salesController.delete("/by-date", deleteSalesByDate);
