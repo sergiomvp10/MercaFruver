@@ -11,14 +11,24 @@ if (!fs.existsSync(SALES_LOG_DIR)) {
   fs.mkdirSync(SALES_LOG_DIR, { recursive: true });
 }
 
+const COLOMBIA_TIMEZONE = 'America/Bogota';
+
+const getColombiaDate = () => {
+  return new Date(new Date().toLocaleString('en-US', { timeZone: COLOMBIA_TIMEZONE }));
+};
+
 const getLogFileName = () => {
-  const today = new Date();
-  const dateStr = today.toISOString().split('T')[0];
+  const today = getColombiaDate();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const dateStr = `${year}-${month}-${day}`;
   return path.join(SALES_LOG_DIR, `ventas_${dateStr}.txt`);
 };
 
 const formatTime = (date) => {
   return date.toLocaleTimeString('es-CO', { 
+    timeZone: COLOMBIA_TIMEZONE,
     hour: '2-digit', 
     minute: '2-digit', 
     second: '2-digit',
@@ -75,6 +85,7 @@ export const initDailyLog = () => {
   const logFile = getLogFileName();
   const today = new Date();
   const dateStr = today.toLocaleDateString('es-CO', { 
+    timeZone: COLOMBIA_TIMEZONE,
     weekday: 'long', 
     year: 'numeric', 
     month: 'long', 

@@ -165,6 +165,20 @@ export const getMonthlySalesReport = async (req, res, next) => {
   }
 };
 
+const COLOMBIA_TIMEZONE = 'America/Bogota';
+
+const formatToColombiaTime = (utcDateStr) => {
+  if (!utcDateStr) return '';
+  const date = new Date(utcDateStr + 'Z');
+  return date.toLocaleTimeString('es-CO', {
+    timeZone: COLOMBIA_TIMEZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+};
+
 export const getSalesWithDetails = async (req, res, next) => {
   try {
     const { date } = req.query;
@@ -178,7 +192,6 @@ export const getSalesWithDetails = async (req, res, next) => {
         i.amount as cantidad,
         i.price_sale as precioVenta,
         (i.price_sale * i.amount) as subtotal,
-        time(i.createdAt) as hora,
         datetime(i.createdAt) as fechaHora
        FROM ItemSales i
        LEFT JOIN Products p ON i.ProductId = p.id
@@ -189,6 +202,11 @@ export const getSalesWithDetails = async (req, res, next) => {
         type: sequelize.QueryTypes.SELECT
       }
     );
+
+    const salesWithColombiaTime = salesDetails.map(sale => ({
+      ...sale,
+      hora: formatToColombiaTime(sale.fechaHora)
+    }));
 
     const total = await sequelize.query(
       `SELECT sum(price_sale * amount) as total, count(*) as totalItems, count(DISTINCT SaleId) as totalVentas
@@ -205,7 +223,7 @@ export const getSalesWithDetails = async (req, res, next) => {
       total: total[0]?.total || 0,
       totalItems: total[0]?.totalItems || 0,
       totalVentas: total[0]?.totalVentas || 0,
-      detalles: salesDetails
+      detalles: salesWithColombiaTime
     });
   } catch (error) {
     console.log(error);
