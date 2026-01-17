@@ -130,35 +130,35 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
       </div>
 
       {showPayModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-800">Calcular Pago</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 w-full h-full max-h-[90vh] shadow-2xl flex flex-col">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-gray-800">Calcular Pago</h3>
               <button
                 onClick={() => setShowPayModal(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            <div className="bg-cyan-100 rounded-lg p-3 mb-4">
-              <div className="flex justify-between text-lg">
+            <div className="bg-cyan-100 rounded-lg p-4 mb-6">
+              <div className="flex justify-between text-xl">
                 <span className="font-semibold">Total a pagar:</span>
-                <span className="font-bold text-cyan-700">{moneyFormat(total)}</span>
+                <span className="font-bold text-cyan-700 text-2xl">{moneyFormat(total)}</span>
               </div>
             </div>
 
-            <div className="space-y-2 mb-4">
-              <p className="font-semibold text-gray-700 mb-2">Denominaciones:</p>
-              <div className="grid grid-cols-4 gap-2">
+            <div className="flex-1 flex flex-col justify-center space-y-4 mb-4">
+              <p className="font-semibold text-gray-700 mb-2 text-lg">Denominaciones:</p>
+              <div className="grid grid-cols-4 gap-4">
                 {DENOMINATIONS.map((denom) => (
                   <button
                     key={denom}
                     onClick={() => incrementDenomination(denom)}
-                    className="bg-cyan-500 text-white px-3 py-2 rounded font-bold hover:bg-cyan-600 transition text-sm"
+                    className="bg-cyan-500 text-white px-4 py-4 rounded-lg font-bold hover:bg-cyan-600 transition text-lg"
                   >
                     {moneyFormat(denom)}
                   </button>
@@ -166,36 +166,36 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
               </div>
             </div>
 
-            <div className="bg-gray-100 rounded-lg p-4 space-y-2">
-              <div className="flex justify-between">
+            <div className="bg-gray-100 rounded-lg p-6 space-y-3">
+              <div className="flex justify-between text-lg">
                 <span className="text-gray-600">Total pagado:</span>
-                <span className="font-bold text-green-600">{moneyFormat(totalPaid)}</span>
+                <span className="font-bold text-green-600 text-xl">{moneyFormat(totalPaid)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between text-lg">
                 <span className="text-gray-600">Total a pagar:</span>
-                <span className="font-bold">{moneyFormat(total)}</span>
+                <span className="font-bold text-xl">{moneyFormat(total)}</span>
               </div>
               <hr className="border-gray-300" />
-              <div className="flex justify-between text-lg">
+              <div className="flex justify-between text-xl">
                 <span className="font-semibold">Cambio:</span>
-                <span className={`font-bold ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <span className={`font-bold text-2xl ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {moneyFormat(Math.abs(change))}
                   {change < 0 && ' (Falta)'}
                 </span>
               </div>
             </div>
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-4 mt-6">
               <button
                 onClick={() => setShowPayModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition font-medium"
+                className="flex-1 px-6 py-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition font-medium text-lg"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmPayment}
                 disabled={totalPaid < total || isProcessing || itemsSale.length === 0}
-                className={`flex-1 px-4 py-2 rounded-lg font-medium transition ${
+                className={`flex-1 px-6 py-4 rounded-lg font-medium transition text-lg ${
                   totalPaid >= total && !isProcessing && itemsSale.length > 0
                     ? 'bg-green-500 text-white hover:bg-green-600'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
