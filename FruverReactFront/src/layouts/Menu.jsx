@@ -6,6 +6,7 @@ import { home } from "react-icons-kit/fa/home";
 import { navicon } from "react-icons-kit/fa/navicon";
 import { barChart } from "react-icons-kit/fa/barChart";
 import { archive } from "react-icons-kit/fa/archive";
+import { money } from "react-icons-kit/fa/money";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -14,6 +15,7 @@ const routes = {
   home: "/",
   products: "/products",
   inventory: "/inventory",
+  expenses: "/expenses",
   sales: "/sales",
   reports: "/reports",
 };
@@ -68,6 +70,13 @@ const Menu = (props) => {
               <div className={isActive(routes.inventory) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
                 <MenuButton fullContent={showMenu} icon={archive}>
                   Inventario
+                </MenuButton>
+              </div>
+            </Link>
+            <Link href={routes.expenses}>
+              <div className={isActive(routes.expenses) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
+                <MenuButton fullContent={showMenu} icon={money}>
+                  Gastos
                 </MenuButton>
               </div>
             </Link>
