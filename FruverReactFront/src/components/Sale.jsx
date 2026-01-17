@@ -29,18 +29,18 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale }) => {
         ))}
       </div>
       <div className="flex flex-col gap-3">
-        <div className="details flex justify-between bg-cyan-400 p-3 rounded-lg gap-10">
-          <div className="bg-cyan-200 rounded-lg p-2 px-3 font-bold">Total</div>
-          <div className="bg-cyan-200 rounded-lg p-2">
+        <div className="details flex items-center bg-cyan-400 p-3 rounded-lg gap-3">
+          <div className="bg-cyan-200 rounded-lg p-2 px-3 font-bold whitespace-nowrap">Total</div>
+          <div className="bg-cyan-200 rounded-lg p-2 flex-1">
             <input
-              className="w-full"
+              className="w-full bg-transparent outline-none"
               type="text"
-              placeholder=" Pago"
+              placeholder="Pago"
               value={valuePay}
               onChange={(e) => setValuePay(e.target.value)}
             />
           </div>
-          <div className="bg-cyan-200 rounded-lg p-2">
+          <div className="bg-cyan-200 rounded-lg p-2 whitespace-nowrap">
             {moneyFormat(totalSale(itemsSale))}
           </div>
         </div>
