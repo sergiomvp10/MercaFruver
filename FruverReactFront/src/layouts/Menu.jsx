@@ -1,5 +1,5 @@
 import MenuButton from "@/components/MenuButton";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { cartPlus } from "react-icons-kit/fa/cartPlus";
 import { cube } from "react-icons-kit/fa/cube";
 import { home } from "react-icons-kit/fa/home";
@@ -7,9 +7,12 @@ import { navicon } from "react-icons-kit/fa/navicon";
 import { barChart } from "react-icons-kit/fa/barChart";
 import { archive } from "react-icons-kit/fa/archive";
 import { money } from "react-icons-kit/fa/money";
+import { cog } from "react-icons-kit/fa/cog";
+import { signOut } from "react-icons-kit/fa/signOut";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { AuthContext } from "@/contexts/authContext";
 
 const routes = {
   home: "/",
@@ -18,13 +21,20 @@ const routes = {
   expenses: "/expenses",
   sales: "/sales",
   reports: "/reports",
+  config: "/config",
 };
 
 const Menu = (props) => {
   const [showMenu, setShowMenu] = useState(true);
   const router = useRouter();
+  const { user, logout, isAdmin } = useContext(AuthContext);
 
   const isActive = (path) => router.pathname === path;
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/login');
+  };
 
   return (
     <div className="flex h-screen">
@@ -94,16 +104,35 @@ const Menu = (props) => {
                 </MenuButton>
               </div>
             </Link>
+            {isAdmin() && (
+              <Link href={routes.config}>
+                <div className={isActive(routes.config) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
+                  <MenuButton fullContent={showMenu} icon={cog}>
+                    Configuracion
+                  </MenuButton>
+                </div>
+              </Link>
+            )}
           </div>
         </nav>
 
-        {showMenu && (
-          <div className="p-4 border-t border-cyan-600">
-            <p className="text-cyan-200 text-xs text-center">
-              Sistema de Ventas
-            </p>
+        <div className="border-t border-cyan-600">
+          {showMenu && user && (
+            <div className="p-4 pb-2">
+              <p className="text-white font-semibold text-sm">{user.name}</p>
+              <p className="text-cyan-300 text-xs">{user.role === 'admin' ? 'Administrador' : 'Empleado'}</p>
+            </div>
+          )}
+          <div className="p-2">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 p-2 text-red-300 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
+            >
+              <MenuButton icon={signOut} />
+              {showMenu && <span className="text-sm">Cerrar Sesion</span>}
+            </button>
           </div>
-        )}
+        </div>
       </motion.div>
       <div className="flex-1 bg-gray-50 overflow-auto">{props.children}</div>
     </div>

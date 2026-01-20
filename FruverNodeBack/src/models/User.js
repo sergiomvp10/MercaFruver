@@ -8,24 +8,18 @@ export const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    username: {
+    pin: {
+      type: DataTypes.STRING(6),
+      allowNull: false,
+      unique: true,
+    },
+    role: {
       type: DataTypes.STRING,
-      // allowNull defaults to true
+      defaultValue: 'employee',
     },
-    email: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      // allowNull defaults to true
-    },
-    phone_number: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      // allowNull defaults to true
-    },
-    password: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      // allowNull defaults to true
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
   },
   {

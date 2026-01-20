@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import ItemSale from "./ItemSale";
 import { totalSale } from "@/utilities/calculates";
 import { moneyFormat } from "@/utilities/formats";
 import Link from "next/link";
 import { serviceMakeSale } from "@/services/productsApi";
+import { AuthContext } from "@/contexts/authContext";
 
 const DENOMINATIONS = [100000, 50000, 20000, 10000, 5000, 2000, 1000];
 
@@ -14,9 +15,10 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationData, setConfirmationData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const checkPay = async () => {
-    const sale = await serviceMakeSale(itemsSale,1)
+    const sale = await serviceMakeSale(itemsSale, user?.id || 1)
     valuePay == undefined ? setPay(totalSale(itemsSale)) : setPay(valuePay);
     setSale(sale.id)
   };
@@ -44,12 +46,12 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     setShowPayModal(true);
   };
 
-  const confirmPayment = async () => {
-    if (itemsSale.length === 0) return;
+    const confirmPayment = async () => {
+      if (itemsSale.length === 0) return;
     
-    setIsProcessing(true);
-    try {
-      const sale = await serviceMakeSale(itemsSale, 1);
+      setIsProcessing(true);
+      try {
+        const sale = await serviceMakeSale(itemsSale, user?.id || 1);
       setValuePay(totalPaid);
       setPay(totalPaid);
       setSale(sale.id);

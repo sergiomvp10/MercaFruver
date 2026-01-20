@@ -1,10 +1,12 @@
 import { SaleContext } from "@/contexts/saleContext";
+import { AuthContext } from "@/contexts/authContext";
 import { moneyFormat } from "@/utilities/formats";
 import React, { useContext, useEffect, useState } from "react";
 import { totalSale } from "@/utilities/calculates";
 
 const Bill = () => {
   const contextSale = useContext(SaleContext);
+  const { user } = useContext(AuthContext);
   const [items, setItems] = useState(contextSale.itemsSale);
 
   useEffect(() => {
@@ -97,7 +99,7 @@ const Bill = () => {
           <span className="font-bold">CAJA No.</span> 1
         </div>
         <div>
-          <span className="font-bold">CAJER@:</span> Adiela Alarcon
+          <span className="font-bold">CAJER@:</span> {user?.name || 'N/A'}
         </div>
         <div>
           <span className="font-bold">OBSERVACION:</span> N/A
