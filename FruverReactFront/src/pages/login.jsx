@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { AuthContext } from '@/contexts/authContext';
+import { apiFetch } from '@/utils/apiFetch';
 
 export default function Login() {
   const [pin, setPin] = useState('');
@@ -12,13 +13,13 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      router.push('/');
+      router.replace('/');
     }
-  }, [user, router]);
+  }, [user, router.pathname]);
 
   useEffect(() => {
     // Inicializar admin por defecto si no existe
-    fetch('http://localhost:4000/api/users/init-admin', {
+    apiFetch('/api/users/init-admin', {
       method: 'POST',
     }).catch(console.error);
   }, []);
@@ -82,7 +83,7 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-8 shadow-2xl w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-cyan-600 mb-2">MercaFruver</h1>
+          <img src="/images/logo-mercafruver.png" alt="MercaFruver" className="h-16 mx-auto mb-4" />
           <p className="text-gray-600">Ingrese su PIN para continuar</p>
         </div>
 

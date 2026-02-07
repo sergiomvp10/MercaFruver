@@ -18,14 +18,10 @@ const Bill = () => {
 
   return (
     <div className="w-72 pr-2">
-      <section className="w-4/5 flex flex-col justify-center items-center">
-        <img className="scale-150" src="/images/logo.jpg" alt="" />
-        <br />
+      <section className="w-full flex flex-col justify-center items-center">
+        <img className="w-48 mx-auto" src="/images/logo-mercafruver.png" alt="MercaFruver" />
         <br />
         <div className="font-bold text-2xl">Ticket Venta #{contextSale.sale}</div>
-        <div>Nayibe Alarcon Parada</div>
-        <div>C.C 46454129</div>
-        <div>Calle 16 # 12 -26</div>
       </section>
       <br />
       <hr />

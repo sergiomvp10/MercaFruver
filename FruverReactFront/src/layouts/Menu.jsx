@@ -1,5 +1,6 @@
 import MenuButton from "@/components/MenuButton";
 import React, { useState, useContext } from "react";
+import { apiFetch } from '@/utils/apiFetch';
 import { cartPlus } from "react-icons-kit/fa/cartPlus";
 import { cube } from "react-icons-kit/fa/cube";
 import { home } from "react-icons-kit/fa/home";
@@ -66,7 +67,7 @@ const Menu = (props) => {
       if (!user) return;
       setIsSubmitting(true);
       try {
-        const response = await fetch('http://localhost:4000/api/cashclose', {
+        const response = await apiFetch('/api/cashclose', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -100,15 +101,15 @@ const Menu = (props) => {
         transition={{ duration: 0.3 }}
         className="flex flex-col bg-gradient-to-b from-cyan-700 to-cyan-800 h-full shadow-lg"
       >
-        <div className="flex items-center justify-between p-4 border-b border-cyan-600">
+        <div className="flex items-center justify-between p-2 border-b border-cyan-600">
           {showMenu && (
-            <motion.span
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-white font-bold text-lg"
+              className="flex-1 flex justify-center"
             >
-              MercaFruver
-            </motion.span>
+              <img src="/images/logo-mercafruver.png" alt="MercaFruver" className="h-12 object-contain" />
+            </motion.div>
           )}
           <MenuButton
             icon={navicon}
