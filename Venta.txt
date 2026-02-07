@@ -1,0 +1,1 @@
+select strftime('%Y-%m-%d', it.createdAt, 'localtime') as 'Fecha', PRINTF('$%,d', sum(it.price_sale * it.amount)) as Venta from ItemSales it group by 1; -- Venta Total Por Fecha
