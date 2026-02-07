@@ -1,6 +1,7 @@
 import SaleContextWrap from "@/contexts/saleContext";
 import { AuthProvider, AuthContext } from "@/contexts/authContext";
 import "@/styles/globals.css";
+import '@/utils/apiFetch';
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
 
@@ -10,9 +11,9 @@ function ProtectedRoute({ children }) {
 
   useEffect(() => {
     if (!loading && !user && router.pathname !== '/login') {
-      router.push('/login');
+      router.replace('/login');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router.pathname]);
 
   if (loading) {
     return (
