@@ -11,7 +11,7 @@ function ProtectedRoute({ children }) {
 
   useEffect(() => {
     if (!loading && !user && router.pathname !== '/login') {
-      router.replace('/login');
+      router.replace('/login').catch(() => {});
     }
   }, [user, loading, router.pathname]);
 

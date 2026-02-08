@@ -13,9 +13,9 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      router.replace('/');
+      router.replace('/').catch(() => {});
     }
-  }, [user, router.pathname]);
+  }, [user]);
 
   useEffect(() => {
     // Inicializar admin por defecto si no existe
