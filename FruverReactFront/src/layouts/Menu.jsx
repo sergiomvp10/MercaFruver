@@ -114,7 +114,7 @@ const Menu = (props) => {
   return (
     <div className="flex h-screen">
       <div
-        className="flex flex-col bg-cyan-400 h-full shadow-lg w-[240px]"
+        className="flex flex-col bg-gradient-to-b from-cyan-700 to-cyan-800 h-full shadow-lg w-[240px]"
       >
         <div className="flex items-center justify-center p-4 border-b border-cyan-600">
           <img src="/images/logo-mercafruver.png" alt="MercaFruver" className="h-20 object-contain" />

@@ -88,7 +88,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
   };
 
   return (
-    <div className="bg-cyan-600 p-4 rounded-lg w-full h-full flex flex-col justify-between gap-4">
+    <div className="bg-gradient-to-b from-cyan-700 to-cyan-800 p-4 rounded-lg w-full h-full flex flex-col justify-between gap-4">
       <div className="bg-cyan-300 rounded-lg w-full p-2 py-4 text-center font-bold text-lg">
         Venta
       </div>
