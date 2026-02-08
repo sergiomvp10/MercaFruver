@@ -33,8 +33,20 @@ export default function Home() {
 
 
   console.log("Este es",contextSale)
+  const barcodeTimerRef = useRef(null);
+
   const handleSearch = (e) => {
-    setSearchValue(e.target.value)
+    const val = e.target.value;
+    setSearchValue(val);
+    if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
+    if (/^\d{4,}$/.test(val.trim())) {
+      barcodeTimerRef.current = setTimeout(() => {
+        if (/^\d{4,13}$/.test(val.trim())) {
+          contextSale.addItemSaleByBarcode(val.trim());
+          setSearchValue('');
+        }
+      }, 300);
+    }
   }
 
   const handleSearchKeyDown = (e) => {
@@ -42,6 +54,7 @@ export default function Home() {
       const val = searchValue.trim();
       if (/^\d{4,13}$/.test(val)) {
         e.preventDefault();
+        if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
         contextSale.addItemSaleByBarcode(val);
         setSearchValue('');
       }
