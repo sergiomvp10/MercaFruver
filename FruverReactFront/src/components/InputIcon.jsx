@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import Icon from 'react-icons-kit'
 
-const InputIcon = ({value, placeholder, icon, onChange, name, id}) => {
+const InputIcon = ({value, placeholder, icon, onChange, onKeyDown, name, id}) => {
   const inputRef = useRef(null);
   const focusInput = () => inputRef.current?.focus();
   return (
@@ -15,6 +15,7 @@ const InputIcon = ({value, placeholder, icon, onChange, name, id}) => {
         placeholder={placeholder}
         type="text"
         onChange={onChange}
+        onKeyDown={onKeyDown}
       />
     </div>
   );

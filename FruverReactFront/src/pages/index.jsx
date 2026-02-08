@@ -35,7 +35,17 @@ export default function Home() {
   console.log("Este es",contextSale)
   const handleSearch = (e) => {
     setSearchValue(e.target.value)
-    console.log(e.target.value)
+  }
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      const val = searchValue.trim();
+      if (/^\d{4,13}$/.test(val)) {
+        e.preventDefault();
+        contextSale.addItemSaleByBarcode(val);
+        setSearchValue('');
+      }
+    }
   }
 
   const handleAddItem = (e, product) => {
@@ -79,6 +89,7 @@ export default function Home() {
                       placeholder={"Search..."}
                       icon={u1F50D}
                       onChange={handleSearch}
+                      onKeyDown={handleSearchKeyDown}
                     ></InputIcon>
                   </div>
                   <div className="flex-1 flex flex-col gap-2 overflow-y-auto p-2">
@@ -95,7 +106,8 @@ export default function Home() {
                           (product) =>
                             product.name
                               .toLowerCase()
-                              .indexOf(searchValue.toLowerCase()) > -1
+                              .indexOf(searchValue.toLowerCase()) > -1 ||
+                            (product.barcode && product.barcode.indexOf(searchValue) > -1)
                         )
                         .map((product) => (
                           <ItemProduct
