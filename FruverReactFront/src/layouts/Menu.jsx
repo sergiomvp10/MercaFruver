@@ -113,33 +113,18 @@ const Menu = (props) => {
 
   return (
     <div className="flex h-screen">
-      <motion.div
-        initial={{ width: showMenu ? 240 : "auto" }}
-        animate={{ width: showMenu ? 240 : "auto" }}
-        transition={{ duration: 0.3 }}
-        className="flex flex-col bg-gradient-to-b from-cyan-700 to-cyan-800 h-full shadow-lg"
+      <div
+        className="flex flex-col bg-gradient-to-b from-cyan-700 to-cyan-800 h-full shadow-lg w-[240px]"
       >
-        <div className="flex items-center justify-between p-3 border-b border-cyan-600">
-          {showMenu && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex-1 flex justify-center"
-            >
-              <img src="/images/logo-mercafruver.png" alt="MercaFruver" className="h-16 object-contain" />
-            </motion.div>
-          )}
-          <MenuButton
-            icon={navicon}
-            onClick={() => setShowMenu(!showMenu)}
-          ></MenuButton>
+        <div className="flex items-center justify-center p-4 border-b border-cyan-600">
+          <img src="/images/logo-mercafruver.png" alt="MercaFruver" className="h-20 object-contain" />
         </div>
 
         <nav className="flex flex-col flex-1 py-2 justify-evenly">
           <div className="flex flex-col justify-evenly flex-1">
             <Link href={routes.home}>
               <div className={isActive(routes.home) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
-                <MenuButton fullContent={showMenu} icon={home}>
+                <MenuButton fullContent={true} icon={home}>
                   Inicio
                 </MenuButton>
               </div>
@@ -147,7 +132,7 @@ const Menu = (props) => {
             {isAdmin() && (
               <Link href={routes.products}>
                 <div className={isActive(routes.products) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
-                  <MenuButton fullContent={showMenu} icon={cube}>
+                  <MenuButton fullContent={true} icon={cube}>
                     Productos
                   </MenuButton>
                 </div>
@@ -155,13 +140,13 @@ const Menu = (props) => {
             )}
             <Link href={isAdmin() ? routes.inventory : routes.invoice}>
               <div className={isActive(isAdmin() ? routes.inventory : routes.invoice) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
-                <MenuButton fullContent={showMenu} icon={archive}>
+                <MenuButton fullContent={true} icon={archive}>
                   {isAdmin() ? 'Inventario' : 'Registrar Factura'}
                 </MenuButton>
               </div>
             </Link>
                         <div onClick={openCashClose} className="cursor-pointer">
-                          <MenuButton fullContent={showMenu} icon={calculator}>
+                          <MenuButton fullContent={true} icon={calculator}>
                             Cerrar Caja
                           </MenuButton>
                         </div>
@@ -169,35 +154,35 @@ const Menu = (props) => {
               <>
                 <Link href={routes.expenses}>
                   <div className={isActive(routes.expenses) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
-                    <MenuButton fullContent={showMenu} icon={money}>
+                    <MenuButton fullContent={true} icon={money}>
                       Gastos
                     </MenuButton>
                   </div>
                 </Link>
                 <Link href={routes.sales}>
                   <div className={isActive(routes.sales) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
-                    <MenuButton fullContent={showMenu} icon={cartPlus}>
+                    <MenuButton fullContent={true} icon={cartPlus}>
                       Ventas
                     </MenuButton>
                   </div>
                 </Link>
                 <Link href={routes.reports}>
                   <div className={isActive(routes.reports) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
-                    <MenuButton fullContent={showMenu} icon={barChart}>
+                    <MenuButton fullContent={true} icon={barChart}>
                       Reportes
                     </MenuButton>
                   </div>
                 </Link>
                 <Link href={routes.stockAlerts}>
                   <div className={isActive(routes.stockAlerts) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
-                    <MenuButton fullContent={showMenu} icon={exclamationTriangle}>
-                      Alerta Stock{lowStockCount > 0 && showMenu ? ` (${lowStockCount})` : ''}
+                    <MenuButton fullContent={true} icon={exclamationTriangle}>
+                      Alerta Stock{lowStockCount > 0 ? ` (${lowStockCount})` : ''}
                     </MenuButton>
                   </div>
                 </Link>
                 <Link href={routes.config}>
                   <div className={isActive(routes.config) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
-                    <MenuButton fullContent={showMenu} icon={cog}>
+                    <MenuButton fullContent={true} icon={cog}>
                       Configuracion
                     </MenuButton>
                   </div>
@@ -213,10 +198,10 @@ const Menu = (props) => {
             className="w-full flex items-center gap-2 p-2 text-red-300 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
           >
             <MenuButton icon={signOut} />
-            {showMenu && <span className="text-sm">{user?.name || 'Cerrar Sesion'} - Salir</span>}
+            <span className="text-sm">{user?.name || 'Cerrar Sesion'} - Salir</span>
           </button>
         </div>
-      </motion.div>
+      </div>
       <div className="flex-1 bg-gray-50 overflow-auto">{props.children}</div>
 
       {showCashClose && (
