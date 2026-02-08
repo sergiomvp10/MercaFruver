@@ -56,8 +56,12 @@ export const newSale = async (req, res, next) => {
 
 export const totalDaySale = async (req, res, next) => {
   try {
-      const total = await sequelize.query("select sum(price_sale *amount) as total  from ItemSales where strftime('%Y-%m-%d', createdAt) = date('now')")
-      res.status(200).json(total[0][0]);
+      const dateStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+      const total = await sequelize.query(
+        `SELECT COALESCE(sum(price_sale * amount), 0) as total FROM ItemSales WHERE date(datetime(createdAt, '-5 hours')) = date(:dateStr)`,
+        { replacements: { dateStr }, type: sequelize.QueryTypes.SELECT }
+      );
+      res.status(200).json(total[0]);
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: "Error al mostrar la venta del dia" });
@@ -73,9 +77,9 @@ export const getSalesByDateRange = async (req, res, next) => {
     }
 
     const total = await sequelize.query(
-      `SELECT sum(price_sale * amount) as total, count(DISTINCT SaleId) as totalSales 
+      `SELECT COALESCE(sum(price_sale * amount), 0) as total, count(DISTINCT SaleId) as totalSales 
        FROM ItemSales 
-       WHERE date(createdAt) >= date(:startDate) AND date(createdAt) <= date(:endDate)`,
+       WHERE date(datetime(createdAt, '-5 hours')) >= date(:startDate) AND date(datetime(createdAt, '-5 hours')) <= date(:endDate)`,
       {
         replacements: { startDate, endDate },
         type: sequelize.QueryTypes.SELECT
@@ -83,10 +87,10 @@ export const getSalesByDateRange = async (req, res, next) => {
     );
 
     const dailyBreakdown = await sequelize.query(
-      `SELECT date(createdAt) as fecha, sum(price_sale * amount) as total, count(DISTINCT SaleId) as cantidadVentas
+      `SELECT date(datetime(createdAt, '-5 hours')) as fecha, sum(price_sale * amount) as total, count(DISTINCT SaleId) as cantidadVentas
        FROM ItemSales 
-       WHERE date(createdAt) >= date(:startDate) AND date(createdAt) <= date(:endDate)
-       GROUP BY date(createdAt)
+       WHERE date(datetime(createdAt, '-5 hours')) >= date(:startDate) AND date(datetime(createdAt, '-5 hours')) <= date(:endDate)
+       GROUP BY date(datetime(createdAt, '-5 hours'))
        ORDER BY fecha DESC`,
       {
         replacements: { startDate, endDate },
@@ -107,12 +111,39 @@ export const getSalesByDateRange = async (req, res, next) => {
 export const getDailySalesReport = async (req, res, next) => {
   try {
     const { date } = req.query;
-    const targetDate = date || new Date().toISOString().split('T')[0];
+    let targetDate = date;
+    if (!targetDate) {
+      targetDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+    }
 
     const total = await sequelize.query(
-      `SELECT sum(price_sale * amount) as total, count(DISTINCT SaleId) as totalSales 
+      `SELECT COALESCE(sum(price_sale * amount), 0) as total, count(DISTINCT SaleId) as totalSales 
        FROM ItemSales 
-       WHERE date(createdAt) = date(:targetDate)`,
+       WHERE date(datetime(createdAt, '-5 hours')) = date(:targetDate)`,
+      {
+        replacements: { targetDate },
+        type: sequelize.QueryTypes.SELECT
+      }
+    );
+
+    const cashTotal = await sequelize.query(
+      `SELECT COALESCE(sum(i.price_sale * i.amount), 0) as total
+       FROM ItemSales i
+       JOIN Sales s ON i.SaleId = s.id
+       WHERE date(datetime(i.createdAt, '-5 hours')) = date(:targetDate)
+       AND (s.paymentMethod = 'EFECTIVO' OR s.paymentMethod IS NULL)`,
+      {
+        replacements: { targetDate },
+        type: sequelize.QueryTypes.SELECT
+      }
+    );
+
+    const transferTotal = await sequelize.query(
+      `SELECT COALESCE(sum(i.price_sale * i.amount), 0) as total
+       FROM ItemSales i
+       JOIN Sales s ON i.SaleId = s.id
+       WHERE date(datetime(i.createdAt, '-5 hours')) = date(:targetDate)
+       AND s.paymentMethod = 'BRE-B'`,
       {
         replacements: { targetDate },
         type: sequelize.QueryTypes.SELECT
@@ -122,7 +153,9 @@ export const getDailySalesReport = async (req, res, next) => {
     res.status(200).json({
       fecha: targetDate,
       total: total[0]?.total || 0,
-      cantidadVentas: total[0]?.totalSales || 0
+      cantidadVentas: total[0]?.totalSales || 0,
+      totalEfectivo: cashTotal[0]?.total || 0,
+      totalTransferencia: transferTotal[0]?.total || 0
     });
   } catch (error) {
     console.log(error);
@@ -133,14 +166,14 @@ export const getDailySalesReport = async (req, res, next) => {
 export const getMonthlySalesReport = async (req, res, next) => {
   try {
     const { year, month } = req.query;
-    const currentDate = new Date();
-    const targetYear = year || currentDate.getFullYear();
-    const targetMonth = month || (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const colombiaDateStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+    const targetYear = year || colombiaDateStr.split('-')[0];
+    const targetMonth = month || colombiaDateStr.split('-')[1];
 
     const total = await sequelize.query(
-      `SELECT sum(price_sale * amount) as total, count(DISTINCT SaleId) as totalSales 
+      `SELECT COALESCE(sum(price_sale * amount), 0) as total, count(DISTINCT SaleId) as totalSales 
        FROM ItemSales 
-       WHERE strftime('%Y', createdAt) = :targetYear AND strftime('%m', createdAt) = :targetMonth`,
+       WHERE strftime('%Y', datetime(createdAt, '-5 hours')) = :targetYear AND strftime('%m', datetime(createdAt, '-5 hours')) = :targetMonth`,
       {
         replacements: { targetYear: targetYear.toString(), targetMonth: targetMonth.toString().padStart(2, '0') },
         type: sequelize.QueryTypes.SELECT
@@ -148,10 +181,10 @@ export const getMonthlySalesReport = async (req, res, next) => {
     );
 
     const dailyBreakdown = await sequelize.query(
-      `SELECT date(createdAt) as fecha, sum(price_sale * amount) as total, count(DISTINCT SaleId) as cantidadVentas
+      `SELECT date(datetime(createdAt, '-5 hours')) as fecha, sum(price_sale * amount) as total, count(DISTINCT SaleId) as cantidadVentas
        FROM ItemSales 
-       WHERE strftime('%Y', createdAt) = :targetYear AND strftime('%m', createdAt) = :targetMonth
-       GROUP BY date(createdAt)
+       WHERE strftime('%Y', datetime(createdAt, '-5 hours')) = :targetYear AND strftime('%m', datetime(createdAt, '-5 hours')) = :targetMonth
+       GROUP BY date(datetime(createdAt, '-5 hours'))
        ORDER BY fecha DESC`,
       {
         replacements: { targetYear: targetYear.toString(), targetMonth: targetMonth.toString().padStart(2, '0') },
@@ -296,7 +329,8 @@ export const getSalesWithDetails = async (req, res, next) => {
         i.price_sale as precioVenta,
         (i.price_sale * i.amount) as subtotal,
         datetime(i.createdAt) as fechaHora,
-        u.name as vendedor
+        u.name as vendedor,
+        s.paymentMethod as metodoPago
        FROM ItemSales i
        LEFT JOIN Products p ON i.ProductId = p.id
        LEFT JOIN Sales s ON i.SaleId = s.id

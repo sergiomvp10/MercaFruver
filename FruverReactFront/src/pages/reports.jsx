@@ -3,9 +3,21 @@ import Menu from "@/layouts/Menu";
 import axios from "axios";
 import { moneyFormat } from "@/utilities/formats";
 
-const API = "http://localhost:4000/api";
+const API = "/api";
 const DEFAULT_PASSWORD = [49, 48, 53, 51, 52, 53, 48, 57, 55, 48].map(c => String.fromCharCode(c)).join('');
 const REPORT_PASSWORD = process.env.NEXT_PUBLIC_REPORT_PASSWORD || DEFAULT_PASSWORD;
+
+const getColombiaDate = () => {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+};
+
+const getColombiaYear = () => {
+  return parseInt(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).split('-')[0]);
+};
+
+const getColombiaMonth = () => {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).split('-')[1];
+};
 
 const Reports = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,11 +31,11 @@ const Reports = () => {
     const [rangeData, setRangeData] = useState(null);
     const [cashCloseData, setCashCloseData] = useState(null);
   
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0'));
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(getColombiaDate());
+  const [selectedYear, setSelectedYear] = useState(getColombiaYear());
+  const [selectedMonth, setSelectedMonth] = useState(getColombiaMonth());
+  const [startDate, setStartDate] = useState(getColombiaDate());
+  const [endDate, setEndDate] = useState(getColombiaDate());
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
@@ -235,16 +247,24 @@ const Reports = () => {
                   <p className="mt-4 text-gray-500">Cargando...</p>
                 </div>
               ) : dailyData ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 p-6 rounded-xl text-white shadow-lg">
-                    <h3 className="text-lg opacity-80">Total Ventas del Dia</h3>
-                    <p className="text-4xl font-bold mt-2">{moneyFormat(dailyData.total || 0)}</p>
-                    <p className="mt-2 opacity-80">{dailyData.fecha}</p>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 p-4 rounded-xl text-white shadow-lg">
+                    <h3 className="text-sm opacity-80">Total Ventas del Dia</h3>
+                    <p className="text-2xl font-bold mt-1">{moneyFormat(dailyData.total || 0)}</p>
+                    <p className="mt-1 opacity-80 text-sm">{dailyData.fecha}</p>
                   </div>
-                  <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl text-white shadow-lg">
-                    <h3 className="text-lg opacity-80">Cantidad de Ventas</h3>
-                    <p className="text-4xl font-bold mt-2">{dailyData.cantidadVentas || 0}</p>
-                    <p className="mt-2 opacity-80">transacciones</p>
+                  <div className="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-xl text-white shadow-lg">
+                    <h3 className="text-sm opacity-80">Ventas en Efectivo</h3>
+                    <p className="text-2xl font-bold mt-1">{moneyFormat(dailyData.totalEfectivo || 0)}</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-xl text-white shadow-lg">
+                    <h3 className="text-sm opacity-80">Transferencias (BRE-B)</h3>
+                    <p className="text-2xl font-bold mt-1">{moneyFormat(dailyData.totalTransferencia || 0)}</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-4 rounded-xl text-white shadow-lg">
+                    <h3 className="text-sm opacity-80">Cantidad de Ventas</h3>
+                    <p className="text-2xl font-bold mt-1">{dailyData.cantidadVentas || 0}</p>
+                    <p className="mt-1 opacity-80 text-sm">transacciones</p>
                   </div>
                 </div>
               ) : (

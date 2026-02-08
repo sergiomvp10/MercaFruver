@@ -57,6 +57,10 @@ const ItemProduct = (props) => {
               price_purchase={props.price_purchase}
               price_sale={props.price_sale}
               stock={props.stock}
+              barcode={props.barcode}
+              pesable={props.pesable}
+              unit={props.unit}
+              min_stock={props.min_stock}
             />
           </Modal>,
           ref.current
@@ -81,7 +85,14 @@ const ItemProduct = (props) => {
       )}
       {actions?.input && (
         <div className="flex-1 text-center rounded-full cursor-pointer">
-          <input onKeyDown={props.onKeyDown} className="text-center w-16 border rounded-lg border-black" />
+          <input
+            type="number"
+            step={props.pesable ? '0.01' : '1'}
+            min="0"
+            onKeyDown={props.onKeyDown}
+            className="text-center w-16 border rounded-lg border-black"
+            placeholder={props.pesable ? (props.unit || '') : ''}
+          />
         </div>
       )}
     </div>

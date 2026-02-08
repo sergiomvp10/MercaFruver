@@ -12,7 +12,7 @@ export const getProducts = (async(req,res,next)=>{
 
 export const createProduct = async(req, res, next) => {
   try {
-    const { name, description, price_purchase, price_sale, stock, barcode } =
+    const { name, description, price_purchase, price_sale, stock, barcode, pesable, unit, min_stock } =
       req.body || req.query;
     const product = await Product.create({
       name,
@@ -21,6 +21,9 @@ export const createProduct = async(req, res, next) => {
       price_sale,
       stock,
       barcode,
+      pesable,
+      unit,
+      min_stock,
     });
     res.status(200).json(product);
   } catch (error) {
@@ -51,6 +54,17 @@ export const deleteProduct = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: "Error en los productos" });
+  }
+};
+
+export const getLowStockProducts = async (req, res, next) => {
+  try {
+    const products = await Product.findAll();
+    const lowStock = products.filter(p => p.min_stock > 0 && p.stock <= p.min_stock);
+    res.status(200).json(lowStock);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error obteniendo productos con stock bajo" });
   }
 };
 

@@ -20,6 +20,9 @@ const UpdateProduct = ({
   price_sale,
   stock,
   barcode,
+  pesable,
+  unit,
+  min_stock,
 }) => {
   const [form, setForm] = useState({
     id,
@@ -29,6 +32,9 @@ const UpdateProduct = ({
     price_sale,
     stock,
     barcode,
+    pesable: pesable || false,
+    unit: unit || 'unidad',
+    min_stock: min_stock || 0,
   });
 
   const handleForm = (e) => {
@@ -51,8 +57,8 @@ const UpdateProduct = ({
   };
 
   return (
-    <div className="flex h-128 flex-col justify-between">
-      <div className="bg-lime-50 rounded-lg p-4 text-center text-2xl font-bold">
+    <div className="flex flex-col gap-3 p-2">
+      <div className="bg-gradient-to-r from-lime-400 to-lime-500 rounded-xl p-3 text-center text-xl font-bold text-white shadow">
         Actualizar Producto
       </div>
       <div className="flex flex-col gap-2">
@@ -70,43 +76,79 @@ const UpdateProduct = ({
           name="description"
           value={form.description}
         />
+        <div className="grid grid-cols-2 gap-2">
+          <InputIcon
+            placeholder={"precio compra"}
+            icon={u1F4B5}
+            onChange={handleForm}
+            name="price_purchase"
+            value={form.price_purchase}
+          />
+          <InputIcon
+            placeholder={"precio venta"}
+            icon={u1F4B0}
+            onChange={handleForm}
+            name="price_sale"
+            value={form.price_sale}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <InputIcon
+            placeholder={"stock"}
+            icon={u1F004}
+            onChange={handleForm}
+            name="stock"
+            value={form.stock}
+          />
+          <div className="flex gap-2 bg-lime-50 px-3 py-2 rounded-lg items-center hover:scale-105">
+            <span className="text-orange-400 font-bold text-sm">Min</span>
+            <input
+              name="min_stock"
+              value={form.min_stock}
+              className="focus:outline-none bg-transparent px-1 caret-black w-full"
+              placeholder="stock minimo"
+              type="number"
+              min="0"
+              onChange={handleForm}
+            />
+          </div>
+        </div>
         <InputIcon
-          placeholder={"precio compra"}
-          icon={u1F4B5}
-          onChange={handleForm}
-          name="price_purchase"
-          value={form.price_purchase}
-        />
-        <InputIcon
-          placeholder={"precio venta"}
-          icon={u1F4B0}
-          onChange={handleForm}
-          name="price_sale"
-          value={form.price_sale}
-        />
-        <InputIcon
-          placeholder={"stock"}
-          icon={u1F004}
-          onChange={handleForm}
-          name="stock"
-          value={form.stock}
-        />
-        <InputIcon
-          placeholder={"código de barras"}
+          placeholder={"codigo de barras"}
           icon={u1F4F1}
           onChange={handleForm}
           name="barcode"
           value={form.barcode || ''}
         />
+        <div className="flex items-center gap-3 bg-lime-50 rounded-lg p-3">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.pesable}
+              onChange={(e) => setForm({ ...form, pesable: e.target.checked, unit: e.target.checked ? 'kg' : 'unidad' })}
+              className="w-5 h-5 accent-orange-400"
+            />
+            <span className="font-bold text-sm">Pesable</span>
+          </label>
+          {form.pesable && (
+            <select
+              value={form.unit}
+              onChange={(e) => setForm({ ...form, unit: e.target.value })}
+              className="border rounded-lg border-black px-2 py-1 text-sm"
+            >
+              <option value="kg">Kilogramos (kg)</option>
+              <option value="lb">Libras (lb)</option>
+              <option value="gr">Gramos (gr)</option>
+            </select>
+          )}
+        </div>
       </div>
-      <div>
-        <button
-          onClick={updateProduct}
-          className="button w-full p-3 font-bold bg-orange-400 rounded-lg text-lime-50 cursor-pointer hover:scale-110 duration-200"
-        >
-          Actualizar
-        </button>
-      </div>
+      <button
+        onClick={updateProduct}
+        className="w-full p-3 font-bold bg-gradient-to-r from-orange-400 to-orange-500 rounded-xl text-white cursor-pointer hover:scale-105 duration-200 shadow-lg"
+      >
+        Actualizar
+      </button>
     </div>
   );
 };

@@ -52,11 +52,11 @@ const Products = () => {
           ref.current
         )}
       <div className="h-full flex flex-col relative">
-        <div className="bg-lime-400 p-4 text-center font-bold text-2xl">
+        <div className="bg-gradient-to-b from-cyan-700 to-cyan-800 p-4 text-center font-bold text-2xl text-white">
           Productos
         </div>
         <div className="flex-1 flex flex-col gap-4 p-4">
-          <div className="bg-lime-400 p-3 rounded-lg">
+          <div className="p-3">
             <InputIcon
               value={searchValue}
               placeholder={"Search..."}
@@ -64,7 +64,14 @@ const Products = () => {
               onChange={handleSearch}
             ></InputIcon>
           </div>
-          <div className="flex-1 flex flex-col gap-2 overflow-y-auto bg-lime-400 p-5 rounded-lg">
+          <div className="flex-1 flex flex-col gap-2 overflow-y-auto p-2">
+            <div className="grid grid-cols-7 gap-10 max-w-2xl min-w-full items-center text-center px-2 py-2 text-white bg-cyan-600 rounded-lg font-semibold">
+              <div className="col-span-2 text-left">Articulo</div>
+              <div>Categoria</div>
+              <div>Precio</div>
+              <div>Stock</div>
+              <div className="col-span-2"></div>
+            </div>
             {!loading && data &&
               data
                 .filter(
@@ -75,12 +82,17 @@ const Products = () => {
                 )
                 .map((product) => (
                   <ItemProduct
-                  id={product.id}
+                    key={product.id}
+                    id={product.id}
                     name={product.name}
                     description={product.description}
                     price_sale={product.price_sale}
                     stock={product.stock}
                     price_purchase={product.price_purchase}
+                    barcode={product.barcode}
+                    pesable={product.pesable}
+                    unit={product.unit}
+                    min_stock={product.min_stock}
                     actions={{ delete: true, edit: true }}
                     refetchingProducts={refetching}
                   ></ItemProduct>

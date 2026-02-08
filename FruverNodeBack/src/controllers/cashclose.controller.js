@@ -30,8 +30,7 @@ export const createCashClose = async (req, res) => {
     const { userId, cashTotal, denominations, notes } = req.body;
 
     const now = new Date();
-    const colombiaDate = new Date(now.toLocaleString('en-US', { timeZone: COLOMBIA_TIMEZONE }));
-    const dateStr = colombiaDate.toISOString().split('T')[0];
+    const dateStr = now.toLocaleDateString('en-CA', { timeZone: COLOMBIA_TIMEZONE });
 
     const systemTotal = await sequelize.query(
       `SELECT COALESCE(sum(price_sale * amount), 0) as total
@@ -92,7 +91,7 @@ export const getCashCloses = async (req, res) => {
 export const getCashClosesByDate = async (req, res) => {
   try {
     const { date } = req.query;
-    const targetDate = date || new Date().toISOString().split('T')[0];
+    const targetDate = date || new Date().toLocaleDateString('en-CA', { timeZone: COLOMBIA_TIMEZONE });
 
     const cashCloses = await sequelize.query(
       `SELECT c.*, u.name as userName
@@ -122,7 +121,7 @@ export const getCashClosesByDate = async (req, res) => {
 export const getDailyCashReport = async (req, res) => {
   try {
     const { date } = req.query;
-    const targetDate = date || new Date().toISOString().split('T')[0];
+    const targetDate = date || new Date().toLocaleDateString('en-CA', { timeZone: COLOMBIA_TIMEZONE });
 
     const systemSales = await sequelize.query(
       `SELECT 
