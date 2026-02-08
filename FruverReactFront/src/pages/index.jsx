@@ -40,12 +40,17 @@ export default function Home() {
 
   const handleAddItem = (e, product) => {
     if (e.key === 'Enter') {
+      const amount = parseInt(e.target.value);
+      if (!amount || amount <= 0) {
+        e.target.value = '';
+        return;
+      }
       contextSale.addItemSale(
         e,
         product.name,
         product.price_purchase,
         product.price_sale,
-        e.target.value,
+        amount,
         product.id
       );
       setSearchValue('');
@@ -85,6 +90,7 @@ export default function Home() {
                         )
                         .map((product) => (
                           <ItemProduct
+                            key={product.id}
                             id={product.id}
                             name={product.name}
                             description={product.description}

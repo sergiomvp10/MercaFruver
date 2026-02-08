@@ -17,10 +17,14 @@ const SaleContextWrap = (props) => {
     amount,
     ProductId
   ) => {
-    console.log(e.key);
     if (e.key == "Enter") {
+      const parsedAmount = parseInt(amount);
+      if (!parsedAmount || parsedAmount <= 0) {
+        e.target.value = "";
+        return;
+      }
       setItemsSale([
-        { name, price_purchase, price_sale, amount, ProductId },
+        { name, price_purchase, price_sale, amount: parsedAmount, ProductId },
         ...itemsSale,
       ]);
       e.target.value = "";
