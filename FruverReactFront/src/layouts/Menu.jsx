@@ -190,16 +190,9 @@ const Menu = (props) => {
                 </Link>
                 <Link href={routes.stockAlerts}>
                   <div className={isActive(routes.stockAlerts) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
-                    <div className="flex items-center">
-                      <MenuButton fullContent={showMenu} icon={exclamationTriangle}>
-                        Alerta Stock
-                      </MenuButton>
-                      {lowStockCount > 0 && showMenu && (
-                        <span className="mr-4 bg-red-400 bg-opacity-60 text-white text-[10px] font-medium rounded-full w-4 h-4 flex items-center justify-center">
-                          {lowStockCount}
-                        </span>
-                      )}
-                    </div>
+                    <MenuButton fullContent={showMenu} icon={exclamationTriangle}>
+                      Alerta Stock{lowStockCount > 0 && showMenu ? ` (${lowStockCount})` : ''}
+                    </MenuButton>
                   </div>
                 </Link>
                 <Link href={routes.config}>
