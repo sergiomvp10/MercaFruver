@@ -3,7 +3,7 @@ import Icon from 'react-icons-kit'
 
 const InputIcon = ({value, placeholder, icon, onChange, name, id}) => {
   return (
-    <div className="flex gap-2 bg-lime-50 px-3 py-2 rounded-lg items-center hover:scale-105">
+    <div className="flex gap-2 bg-lime-50 px-3 py-2 rounded-lg items-center">
       <Icon icon={icon} size={32} color={"#F4A261"} />
       <input
         name={name}

@@ -91,7 +91,7 @@ const ItemProduct = (props) => {
             min="0"
             onKeyDown={props.onKeyDown}
             className="text-center w-16 border rounded-lg border-black"
-            placeholder={props.pesable ? props.unit || 'kg' : 'qty'}
+            placeholder={props.pesable ? (props.unit || '') : ''}
           />
         </div>
       )}
