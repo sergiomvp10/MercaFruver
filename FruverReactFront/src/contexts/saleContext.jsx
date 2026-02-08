@@ -10,25 +10,18 @@ const SaleContextWrap = (props) => {
   const [pay, setPay] = useState("")
 
   const addItemSale = (
-    e,
     name,
     price_purchase,
     price_sale,
     amount,
     ProductId
   ) => {
-    if (e.key == "Enter") {
-      const parsedAmount = parseFloat(amount);
-      if (!parsedAmount || parsedAmount <= 0) {
-        e.target.value = "";
-        return;
-      }
-      setItemsSale([
-        { name, price_purchase, price_sale, amount: parsedAmount, ProductId },
-        ...itemsSale,
-      ]);
-      e.target.value = "";
-    }
+    const parsedAmount = parseFloat(amount);
+    if (!parsedAmount || parsedAmount <= 0) return;
+    setItemsSale(prev => [
+      { name, price_purchase, price_sale, amount: parsedAmount, ProductId },
+      ...prev,
+    ]);
   };
 
   const deleteItemSale = (item) => {
@@ -43,9 +36,9 @@ const SaleContextWrap = (props) => {
     try {
       const response = await serviceGetProductByBarcode(barcode);
       const product = response.data;
-      setItemsSale([
+      setItemsSale(prev => [
         { name: product.name, price_purchase: product.price_purchase, price_sale: product.price_sale, amount: 1, ProductId: product.id },
-        ...itemsSale,
+        ...prev,
       ]);
     } catch (error) {
       console.error('Error al buscar producto por código de barras:', error);

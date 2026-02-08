@@ -40,14 +40,15 @@ export default function Home() {
 
   const handleAddItem = (e, product) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       const val = e.target.value;
       const amount = product.pesable ? parseFloat(val) : parseInt(val);
       if (!amount || amount <= 0) {
         e.target.value = '';
         return;
       }
+      e.target.value = '';
       contextSale.addItemSale(
-        e,
         product.name,
         product.price_purchase,
         product.price_sale,
