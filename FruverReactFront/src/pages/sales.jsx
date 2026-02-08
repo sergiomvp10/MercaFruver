@@ -3,7 +3,7 @@ import Menu from "@/layouts/Menu";
 import axios from "axios";
 import { moneyFormat } from "@/utilities/formats";
 
-const API = "http://localhost:4000/api";
+const API = "/api";
 const DEFAULT_PASSWORD = [49, 48, 53, 51, 52, 53, 48, 57, 55, 48].map(c => String.fromCharCode(c)).join('');
 const SALES_PASSWORD = process.env.NEXT_PUBLIC_SALES_PASSWORD || DEFAULT_PASSWORD;
 
@@ -196,6 +196,7 @@ const Sales = () => {
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cantidad</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio Unit.</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subtotal</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vendedor</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Venta #</th>
                           </tr>
                         </thead>
@@ -216,6 +217,9 @@ const Sales = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
                                 {moneyFormat(item.subtotal || 0)}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                {item.vendedor || 'Sin asignar'}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                 #{item.SaleId}

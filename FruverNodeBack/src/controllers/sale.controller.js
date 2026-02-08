@@ -295,9 +295,12 @@ export const getSalesWithDetails = async (req, res, next) => {
         i.amount as cantidad,
         i.price_sale as precioVenta,
         (i.price_sale * i.amount) as subtotal,
-        datetime(i.createdAt) as fechaHora
+        datetime(i.createdAt) as fechaHora,
+        u.name as vendedor
        FROM ItemSales i
        LEFT JOIN Products p ON i.ProductId = p.id
+       LEFT JOIN Sales s ON i.SaleId = s.id
+       LEFT JOIN Users u ON s.UserId = u.id
        WHERE date(datetime(i.createdAt, '-5 hours')) = date(:targetDate)
        ORDER BY datetime(i.createdAt, '-5 hours') DESC`,
       {
