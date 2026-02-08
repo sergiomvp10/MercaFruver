@@ -6,6 +6,6 @@ export const sequelize = new Sequelize({
 });
 
 (async () => {
-  await sequelize.sync({ alter: true });
+  await sequelize.sync({ force: false });
   // Code here
 })();
