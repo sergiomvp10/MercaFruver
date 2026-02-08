@@ -197,6 +197,7 @@ const Sales = () => {
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio Unit.</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subtotal</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vendedor</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pago</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Venta #</th>
                           </tr>
                         </thead>
@@ -220,6 +221,9 @@ const Sales = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                 {item.vendedor || 'Sin asignar'}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
+                                {item.metodoPago || 'EFECTIVO'}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                 #{item.SaleId}
