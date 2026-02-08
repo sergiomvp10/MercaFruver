@@ -119,14 +119,14 @@ const Menu = (props) => {
         transition={{ duration: 0.3 }}
         className="flex flex-col bg-gradient-to-b from-cyan-700 to-cyan-800 h-full shadow-lg"
       >
-        <div className="flex items-center justify-between p-2 border-b border-cyan-600">
+        <div className="flex items-center justify-between p-3 border-b border-cyan-600">
           {showMenu && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="flex-1 flex justify-center"
             >
-              <img src="/images/logo-mercafruver.png" alt="MercaFruver" className="h-12 object-contain" />
+              <img src="/images/logo-mercafruver.png" alt="MercaFruver" className="h-16 object-contain" />
             </motion.div>
           )}
           <MenuButton
@@ -135,8 +135,8 @@ const Menu = (props) => {
           ></MenuButton>
         </div>
 
-        <nav className="flex flex-col flex-1 py-4">
-          <div className="space-y-1">
+        <nav className="flex flex-col flex-1 py-2 justify-evenly">
+          <div className="flex flex-col justify-evenly flex-1">
             <Link href={routes.home}>
               <div className={isActive(routes.home) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
                 <MenuButton fullContent={showMenu} icon={home}>
@@ -212,22 +212,14 @@ const Menu = (props) => {
           </div>
         </nav>
 
-        <div className="border-t border-cyan-600">
-          {showMenu && user && (
-            <div className="p-4 pb-2">
-              <p className="text-white font-semibold text-sm">{user.name}</p>
-              <p className="text-cyan-300 text-xs">{user.role === 'admin' ? 'Administrador' : 'Empleado'}</p>
-            </div>
-          )}
-          <div className="p-2">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2 p-2 text-red-300 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
-            >
-              <MenuButton icon={signOut} />
-              {showMenu && <span className="text-sm">Cerrar Sesion</span>}
-            </button>
-          </div>
+        <div className="border-t border-cyan-600 p-2">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 p-2 text-red-300 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
+          >
+            <MenuButton icon={signOut} />
+            {showMenu && <span className="text-sm">{user?.name || 'Cerrar Sesion'} - Salir</span>}
+          </button>
         </div>
       </motion.div>
       <div className="flex-1 bg-gray-50 overflow-auto">{props.children}</div>
