@@ -75,6 +75,28 @@ const CreateProduct = ({refetchingProducts, handleModal}) => {
           onChange={handleForm}
           name="barcode"
         />
+        <div className="flex items-center gap-3 bg-lime-50 rounded-lg p-3">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.pesable || false}
+              onChange={(e) => setForm({ ...form, pesable: e.target.checked, unit: e.target.checked ? 'kg' : 'unidad' })}
+              className="w-5 h-5 accent-orange-400"
+            />
+            <span className="font-bold text-sm">Pesable</span>
+          </label>
+          {form.pesable && (
+            <select
+              value={form.unit || 'kg'}
+              onChange={(e) => setForm({ ...form, unit: e.target.value })}
+              className="border rounded-lg border-black px-2 py-1 text-sm"
+            >
+              <option value="kg">Kilogramos (kg)</option>
+              <option value="lb">Libras (lb)</option>
+              <option value="gr">Gramos (gr)</option>
+            </select>
+          )}
+        </div>
       </div>
       <div>
         <button onClick={createProduct} className="button w-full p-3 font-bold bg-orange-400 rounded-lg text-lime-50 cursor-pointer hover:scale-110 duration-200">

@@ -12,7 +12,7 @@ export const getProducts = (async(req,res,next)=>{
 
 export const createProduct = async(req, res, next) => {
   try {
-    const { name, description, price_purchase, price_sale, stock, barcode } =
+    const { name, description, price_purchase, price_sale, stock, barcode, pesable, unit } =
       req.body || req.query;
     const product = await Product.create({
       name,
@@ -21,6 +21,8 @@ export const createProduct = async(req, res, next) => {
       price_sale,
       stock,
       barcode,
+      pesable,
+      unit,
     });
     res.status(200).json(product);
   } catch (error) {

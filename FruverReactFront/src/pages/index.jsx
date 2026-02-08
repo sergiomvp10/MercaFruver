@@ -40,12 +40,18 @@ export default function Home() {
 
   const handleAddItem = (e, product) => {
     if (e.key === 'Enter') {
+      const val = e.target.value;
+      const amount = product.pesable ? parseFloat(val) : parseInt(val);
+      if (!amount || amount <= 0) {
+        e.target.value = '';
+        return;
+      }
       contextSale.addItemSale(
         e,
         product.name,
         product.price_purchase,
         product.price_sale,
-        e.target.value,
+        amount,
         product.id
       );
       setSearchValue('');
@@ -85,6 +91,7 @@ export default function Home() {
                         )
                         .map((product) => (
                           <ItemProduct
+                            key={product.id}
                             id={product.id}
                             name={product.name}
                             description={product.description}
@@ -92,6 +99,8 @@ export default function Home() {
                             stock={product.stock}
                             price_purchase={product.price_purchase}
                             barcode={product.barcode}
+                            pesable={product.pesable}
+                            unit={product.unit}
                             actions={{ input: true, edit: false }}
                             refetchingProducts={refetching}
                             onKeyDown={(e) => handleAddItem(e, product)}

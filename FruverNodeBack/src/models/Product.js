@@ -33,6 +33,14 @@ export const Product = sequelize.define(
       allowNull: true,
       unique: true,
     },
+    pesable: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    unit: {
+      type: DataTypes.STRING,
+      defaultValue: 'unidad',
+    },
   },
   {
     // Other model options go here

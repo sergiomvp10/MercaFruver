@@ -75,12 +75,16 @@ const Products = () => {
                 )
                 .map((product) => (
                   <ItemProduct
-                  id={product.id}
+                    key={product.id}
+                    id={product.id}
                     name={product.name}
                     description={product.description}
                     price_sale={product.price_sale}
                     stock={product.stock}
                     price_purchase={product.price_purchase}
+                    barcode={product.barcode}
+                    pesable={product.pesable}
+                    unit={product.unit}
                     actions={{ delete: true, edit: true }}
                     refetchingProducts={refetching}
                   ></ItemProduct>

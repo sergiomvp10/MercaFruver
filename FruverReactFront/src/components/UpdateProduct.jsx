@@ -20,6 +20,8 @@ const UpdateProduct = ({
   price_sale,
   stock,
   barcode,
+  pesable,
+  unit,
 }) => {
   const [form, setForm] = useState({
     id,
@@ -29,6 +31,8 @@ const UpdateProduct = ({
     price_sale,
     stock,
     barcode,
+    pesable: pesable || false,
+    unit: unit || 'unidad',
   });
 
   const handleForm = (e) => {
@@ -98,6 +102,28 @@ const UpdateProduct = ({
           name="barcode"
           value={form.barcode || ''}
         />
+        <div className="flex items-center gap-3 bg-lime-50 rounded-lg p-3">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.pesable}
+              onChange={(e) => setForm({ ...form, pesable: e.target.checked, unit: e.target.checked ? 'kg' : 'unidad' })}
+              className="w-5 h-5 accent-orange-400"
+            />
+            <span className="font-bold text-sm">Pesable</span>
+          </label>
+          {form.pesable && (
+            <select
+              value={form.unit}
+              onChange={(e) => setForm({ ...form, unit: e.target.value })}
+              className="border rounded-lg border-black px-2 py-1 text-sm"
+            >
+              <option value="kg">Kilogramos (kg)</option>
+              <option value="lb">Libras (lb)</option>
+              <option value="gr">Gramos (gr)</option>
+            </select>
+          )}
+        </div>
       </div>
       <div>
         <button

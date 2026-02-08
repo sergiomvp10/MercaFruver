@@ -1,8 +1,8 @@
 import axios from "axios"
 
-const API = "http://localhost:4000/api";
+const API = "/api";
 
-export const serviceCreateProduct = async ({name,description,price_purchase,price_sale,stock,barcode})=>{
+export const serviceCreateProduct = async ({name,description,price_purchase,price_sale,stock,barcode,pesable,unit})=>{
     const data = await axios.post(`${API}/products`, {
       name,
       description,
@@ -10,6 +10,8 @@ export const serviceCreateProduct = async ({name,description,price_purchase,pric
       price_sale,
       stock,
       barcode,
+      pesable,
+      unit,
     });
     return data.data
 }
@@ -22,6 +24,8 @@ export const serviceUpdateProduct = async ({
   price_sale,
   stock,
   barcode,
+  pesable,
+  unit,
 }) => {
   const data = await axios.put(`${API}/products/${id}`, {
     name,
@@ -30,6 +34,8 @@ export const serviceUpdateProduct = async ({
     price_sale,
     stock,
     barcode,
+    pesable,
+    unit,
   });
   return data.data;
 };
