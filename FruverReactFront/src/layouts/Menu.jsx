@@ -189,12 +189,12 @@ const Menu = (props) => {
                   </div>
                 </Link>
                 <Link href={routes.stockAlerts}>
-                  <div className={`relative ${isActive(routes.stockAlerts) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}`}>
+                  <div className={`relative flex items-center ${isActive(routes.stockAlerts) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}`}>
                     <MenuButton fullContent={showMenu} icon={exclamationTriangle}>
                       Alerta Stock
                     </MenuButton>
                     {lowStockCount > 0 && (
-                      <span className="absolute top-1 right-3 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
                         {lowStockCount}
                       </span>
                     )}
