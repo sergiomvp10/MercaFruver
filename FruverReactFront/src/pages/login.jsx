@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { AuthContext } from '@/contexts/authContext';
 import { apiFetch } from '@/utils/apiFetch';
@@ -11,11 +11,29 @@ export default function Login() {
   const { login, user } = useContext(AuthContext);
   const router = useRouter();
 
+  const hiddenInputRef = useRef(null);
+
   useEffect(() => {
     if (user) {
       router.replace('/');
     }
   }, [user, router.pathname]);
+
+  useEffect(() => {
+    if (hiddenInputRef.current) {
+      hiddenInputRef.current.focus();
+    }
+  }, []);
+
+  const handleKeyboardInput = (e) => {
+    if (e.key >= '0' && e.key <= '9') {
+      handlePinInput(e.key);
+    } else if (e.key === 'Backspace') {
+      handleDelete();
+    } else if (e.key === 'Enter' && pin.length === 4) {
+      handleSubmit();
+    }
+  };
 
   useEffect(() => {
     // Inicializar admin por defecto si no existe
@@ -81,7 +99,16 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl p-8 shadow-2xl w-full max-w-md">
+      <div className="bg-white rounded-2xl p-8 shadow-2xl w-full max-w-md" onClick={() => hiddenInputRef.current?.focus()}>
+        <input
+          ref={hiddenInputRef}
+          type="text"
+          inputMode="numeric"
+          autoFocus
+          onKeyDown={handleKeyboardInput}
+          className="absolute opacity-0 w-0 h-0"
+          tabIndex={-1}
+        />
         <div className="text-center mb-8">
           <img src="/images/logo-mercafruver.png" alt="MercaFruver" className="h-16 mx-auto mb-4" />
           <p className="text-gray-600">Ingrese su PIN para continuar</p>
