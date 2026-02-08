@@ -296,7 +296,8 @@ export const getSalesWithDetails = async (req, res, next) => {
         i.price_sale as precioVenta,
         (i.price_sale * i.amount) as subtotal,
         datetime(i.createdAt) as fechaHora,
-        u.name as vendedor
+        u.name as vendedor,
+        s.paymentMethod as metodoPago
        FROM ItemSales i
        LEFT JOIN Products p ON i.ProductId = p.id
        LEFT JOIN Sales s ON i.SaleId = s.id
