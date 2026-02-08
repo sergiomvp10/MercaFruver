@@ -67,7 +67,7 @@ export default function Home() {
         autoFocus
       />
             <div className="h-full flex flex-col overflow-hidden">
-              <div className="bg-cyan-400 p-4 text-center font-bold text-2xl flex-shrink-0">
+              <div className="bg-gradient-to-b from-cyan-700 to-cyan-800 p-4 text-center font-bold text-2xl text-white flex-shrink-0">
                 Inicio
               </div>
               <div className="flex flex-1 w-full gap-4 p-4 overflow-hidden">

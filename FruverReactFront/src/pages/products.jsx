@@ -52,7 +52,7 @@ const Products = () => {
           ref.current
         )}
       <div className="h-full flex flex-col relative">
-        <div className="bg-lime-400 p-4 text-center font-bold text-2xl">
+        <div className="bg-gradient-to-b from-cyan-700 to-cyan-800 p-4 text-center font-bold text-2xl text-white">
           Productos
         </div>
         <div className="flex-1 flex flex-col gap-4 p-4">
