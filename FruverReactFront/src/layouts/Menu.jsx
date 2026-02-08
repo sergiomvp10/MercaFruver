@@ -189,15 +189,17 @@ const Menu = (props) => {
                   </div>
                 </Link>
                 <Link href={routes.stockAlerts}>
-                  <div className={`relative flex items-center ${isActive(routes.stockAlerts) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}`}>
-                    <MenuButton fullContent={showMenu} icon={exclamationTriangle}>
-                      Alerta Stock
-                    </MenuButton>
-                    {lowStockCount > 0 && (
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-                        {lowStockCount}
-                      </span>
-                    )}
+                  <div className={isActive(routes.stockAlerts) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
+                    <div className="flex items-center">
+                      <MenuButton fullContent={showMenu} icon={exclamationTriangle}>
+                        Alerta Stock
+                      </MenuButton>
+                      {lowStockCount > 0 && showMenu && (
+                        <span className="mr-4 bg-red-400 bg-opacity-60 text-white text-[10px] font-medium rounded-full w-4 h-4 flex items-center justify-center">
+                          {lowStockCount}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </Link>
                 <Link href={routes.config}>
