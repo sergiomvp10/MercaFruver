@@ -7,6 +7,30 @@ const API = "/api";
 const DEFAULT_PASSWORD = [49, 48, 53, 51, 52, 53, 48, 57, 55, 48].map(c => String.fromCharCode(c)).join('');
 const REPORT_PASSWORD = process.env.NEXT_PUBLIC_REPORT_PASSWORD || DEFAULT_PASSWORD;
 
+const getColombiaDate = () => {
+  const now = new Date();
+  const colombiaOffset = -5 * 60;
+  const localOffset = now.getTimezoneOffset();
+  const colombiaTime = new Date(now.getTime() + (localOffset - colombiaOffset) * 60000);
+  return colombiaTime.toISOString().split('T')[0];
+};
+
+const getColombiaYear = () => {
+  const now = new Date();
+  const colombiaOffset = -5 * 60;
+  const localOffset = now.getTimezoneOffset();
+  const colombiaTime = new Date(now.getTime() + (localOffset - colombiaOffset) * 60000);
+  return colombiaTime.getFullYear();
+};
+
+const getColombiaMonth = () => {
+  const now = new Date();
+  const colombiaOffset = -5 * 60;
+  const localOffset = now.getTimezoneOffset();
+  const colombiaTime = new Date(now.getTime() + (localOffset - colombiaOffset) * 60000);
+  return (colombiaTime.getMonth() + 1).toString().padStart(2, '0');
+};
+
 const Reports = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
@@ -19,11 +43,11 @@ const Reports = () => {
     const [rangeData, setRangeData] = useState(null);
     const [cashCloseData, setCashCloseData] = useState(null);
   
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0'));
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(getColombiaDate());
+  const [selectedYear, setSelectedYear] = useState(getColombiaYear());
+  const [selectedMonth, setSelectedMonth] = useState(getColombiaMonth());
+  const [startDate, setStartDate] = useState(getColombiaDate());
+  const [endDate, setEndDate] = useState(getColombiaDate());
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
