@@ -41,6 +41,10 @@ export const Product = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: 'unidad',
     },
+    min_stock: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
   },
   {
     // Other model options go here

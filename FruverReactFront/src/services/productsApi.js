@@ -2,7 +2,7 @@ import axios from "axios"
 
 const API = "/api";
 
-export const serviceCreateProduct = async ({name,description,price_purchase,price_sale,stock,barcode,pesable,unit})=>{
+export const serviceCreateProduct = async ({name,description,price_purchase,price_sale,stock,barcode,pesable,unit,min_stock})=>{
     const data = await axios.post(`${API}/products`, {
       name,
       description,
@@ -12,6 +12,7 @@ export const serviceCreateProduct = async ({name,description,price_purchase,pric
       barcode,
       pesable,
       unit,
+      min_stock,
     });
     return data.data
 }
@@ -26,6 +27,7 @@ export const serviceUpdateProduct = async ({
   barcode,
   pesable,
   unit,
+  min_stock,
 }) => {
   const data = await axios.put(`${API}/products/${id}`, {
     name,
@@ -36,6 +38,7 @@ export const serviceUpdateProduct = async ({
     barcode,
     pesable,
     unit,
+    min_stock,
   });
   return data.data;
 };
@@ -59,4 +62,9 @@ export const serviceMakeSale = async (itemsSale, userId, paymentMethod = 'EFECTI
 export const serviceGetProductByBarcode = async (barcode) => {
     const data = await axios.get(`${API}/products/barcode/${barcode}`);
     return data;
+}
+
+export const serviceGetLowStockProducts = async () => {
+    const data = await axios.get(`${API}/products/low-stock`);
+    return data.data;
 }

@@ -85,6 +85,7 @@ const Products = () => {
                     barcode={product.barcode}
                     pesable={product.pesable}
                     unit={product.unit}
+                    min_stock={product.min_stock}
                     actions={{ delete: true, edit: true }}
                     refetchingProducts={refetching}
                   ></ItemProduct>

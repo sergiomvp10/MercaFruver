@@ -34,8 +34,8 @@ const CreateProduct = ({refetchingProducts, handleModal}) => {
   }
 
   return (
-    <div className="flex h-128 flex-col justify-between">
-      <div className="bg-lime-50 rounded-lg p-4 text-center text-2xl font-bold">
+    <div className="flex flex-col gap-3 p-2">
+      <div className="bg-gradient-to-r from-lime-400 to-lime-500 rounded-xl p-3 text-center text-xl font-bold text-white shadow">
         Crear Producto
       </div>
       <div className="flex flex-col gap-2">
@@ -51,26 +51,41 @@ const CreateProduct = ({refetchingProducts, handleModal}) => {
           onChange={handleForm}
           name="description"
         />
+        <div className="grid grid-cols-2 gap-2">
+          <InputIcon
+            placeholder={"precio compra"}
+            icon={u1F4B5}
+            onChange={handleForm}
+            name="price_purchase"
+          />
+          <InputIcon
+            placeholder={"precio venta"}
+            icon={u1F4B0}
+            onChange={handleForm}
+            name="price_sale"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <InputIcon
+            placeholder={"stock"}
+            icon={u1F004}
+            onChange={handleForm}
+            name="stock"
+          />
+          <div className="flex gap-2 bg-lime-50 px-3 py-2 rounded-lg items-center hover:scale-105">
+            <span className="text-orange-400 font-bold text-sm">Min</span>
+            <input
+              name="min_stock"
+              className="focus:outline-none bg-transparent px-1 caret-black w-full"
+              placeholder="stock minimo"
+              type="number"
+              min="0"
+              onChange={handleForm}
+            />
+          </div>
+        </div>
         <InputIcon
-          placeholder={"precio compra"}
-          icon={u1F4B5}
-          onChange={handleForm}
-          name="price_purchase"
-        />
-        <InputIcon
-          placeholder={"precio venta"}
-          icon={u1F4B0}
-          onChange={handleForm}
-          name="price_sale"
-        />
-        <InputIcon
-          placeholder={"stock"}
-          icon={u1F004}
-          onChange={handleForm}
-          name="stock"
-        />
-        <InputIcon
-          placeholder={"código de barras"}
+          placeholder={"codigo de barras"}
           icon={u1F4F1}
           onChange={handleForm}
           name="barcode"
@@ -98,11 +113,9 @@ const CreateProduct = ({refetchingProducts, handleModal}) => {
           )}
         </div>
       </div>
-      <div>
-        <button onClick={createProduct} className="button w-full p-3 font-bold bg-orange-400 rounded-lg text-lime-50 cursor-pointer hover:scale-110 duration-200">
-          Crear
-        </button>
-      </div>
+      <button onClick={createProduct} className="w-full p-3 font-bold bg-gradient-to-r from-orange-400 to-orange-500 rounded-xl text-white cursor-pointer hover:scale-105 duration-200 shadow-lg">
+        Crear
+      </button>
     </div>
   );
 };

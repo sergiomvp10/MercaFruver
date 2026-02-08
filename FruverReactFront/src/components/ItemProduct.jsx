@@ -60,6 +60,7 @@ const ItemProduct = (props) => {
               barcode={props.barcode}
               pesable={props.pesable}
               unit={props.unit}
+              min_stock={props.min_stock}
             />
           </Modal>,
           ref.current

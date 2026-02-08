@@ -1,6 +1,7 @@
 import MenuButton from "@/components/MenuButton";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { apiFetch } from '@/utils/apiFetch';
+import { exclamationTriangle } from "react-icons-kit/fa/exclamationTriangle";
 import { cartPlus } from "react-icons-kit/fa/cartPlus";
 import { cube } from "react-icons-kit/fa/cube";
 import { home } from "react-icons-kit/fa/home";
@@ -24,6 +25,7 @@ const routes = {
   expenses: "/expenses",
   sales: "/sales",
   reports: "/reports",
+  stockAlerts: "/stock-alerts",
   config: "/config",
 };
 
@@ -35,8 +37,24 @@ const Menu = (props) => {
   const [cashCounts, setCashCounts] = useState({});
   const [cashCloseResult, setCashCloseResult] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lowStockCount, setLowStockCount] = useState(0);
   const router = useRouter();
   const { user, logout, isAdmin } = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchLowStock = async () => {
+      try {
+        const res = await apiFetch('/api/products/low-stock');
+        const data = await res.json();
+        setLowStockCount(data.length);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchLowStock();
+    const interval = setInterval(fetchLowStock, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const isActive = (path) => router.pathname === path;
 
@@ -168,6 +186,18 @@ const Menu = (props) => {
                     <MenuButton fullContent={showMenu} icon={barChart}>
                       Reportes
                     </MenuButton>
+                  </div>
+                </Link>
+                <Link href={routes.stockAlerts}>
+                  <div className={`relative ${isActive(routes.stockAlerts) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}`}>
+                    <MenuButton fullContent={showMenu} icon={exclamationTriangle}>
+                      Alerta Stock
+                    </MenuButton>
+                    {lowStockCount > 0 && (
+                      <span className="absolute top-1 right-3 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                        {lowStockCount}
+                      </span>
+                    )}
                   </div>
                 </Link>
                 <Link href={routes.config}>
