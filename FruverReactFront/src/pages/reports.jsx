@@ -8,27 +8,15 @@ const DEFAULT_PASSWORD = [49, 48, 53, 51, 52, 53, 48, 57, 55, 48].map(c => Strin
 const REPORT_PASSWORD = process.env.NEXT_PUBLIC_REPORT_PASSWORD || DEFAULT_PASSWORD;
 
 const getColombiaDate = () => {
-  const now = new Date();
-  const colombiaOffset = -5 * 60;
-  const localOffset = now.getTimezoneOffset();
-  const colombiaTime = new Date(now.getTime() + (localOffset - colombiaOffset) * 60000);
-  return colombiaTime.toISOString().split('T')[0];
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
 };
 
 const getColombiaYear = () => {
-  const now = new Date();
-  const colombiaOffset = -5 * 60;
-  const localOffset = now.getTimezoneOffset();
-  const colombiaTime = new Date(now.getTime() + (localOffset - colombiaOffset) * 60000);
-  return colombiaTime.getFullYear();
+  return parseInt(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).split('-')[0]);
 };
 
 const getColombiaMonth = () => {
-  const now = new Date();
-  const colombiaOffset = -5 * 60;
-  const localOffset = now.getTimezoneOffset();
-  const colombiaTime = new Date(now.getTime() + (localOffset - colombiaOffset) * 60000);
-  return (colombiaTime.getMonth() + 1).toString().padStart(2, '0');
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).split('-')[1];
 };
 
 const Reports = () => {

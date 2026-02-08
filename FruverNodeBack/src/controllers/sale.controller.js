@@ -56,9 +56,7 @@ export const newSale = async (req, res, next) => {
 
 export const totalDaySale = async (req, res, next) => {
   try {
-      const now = new Date();
-      const colombiaDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
-      const dateStr = colombiaDate.toISOString().split('T')[0];
+      const dateStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
       const total = await sequelize.query(
         `SELECT COALESCE(sum(price_sale * amount), 0) as total FROM ItemSales WHERE date(datetime(createdAt, '-5 hours')) = date(:dateStr)`,
         { replacements: { dateStr }, type: sequelize.QueryTypes.SELECT }
@@ -115,9 +113,7 @@ export const getDailySalesReport = async (req, res, next) => {
     const { date } = req.query;
     let targetDate = date;
     if (!targetDate) {
-      const now = new Date();
-      const colombiaDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
-      targetDate = colombiaDate.toISOString().split('T')[0];
+      targetDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
     }
 
     const total = await sequelize.query(
@@ -170,10 +166,9 @@ export const getDailySalesReport = async (req, res, next) => {
 export const getMonthlySalesReport = async (req, res, next) => {
   try {
     const { year, month } = req.query;
-    const now = new Date();
-    const colombiaDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
-    const targetYear = year || colombiaDate.getFullYear();
-    const targetMonth = month || (colombiaDate.getMonth() + 1).toString().padStart(2, '0');
+    const colombiaDateStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+    const targetYear = year || colombiaDateStr.split('-')[0];
+    const targetMonth = month || colombiaDateStr.split('-')[1];
 
     const total = await sequelize.query(
       `SELECT COALESCE(sum(price_sale * amount), 0) as total, count(DISTINCT SaleId) as totalSales 
