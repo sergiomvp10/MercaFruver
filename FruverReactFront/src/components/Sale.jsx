@@ -136,42 +136,42 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
       </div>
 
       {showPayModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-5 w-[90%] max-w-lg shadow-2xl flex flex-col overflow-y-auto max-h-[95vh]">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xl font-bold text-gray-800">Calcular Pago</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2">
+          <div className="bg-white rounded-xl shadow-2xl flex flex-col w-[95%] max-w-md max-h-[98vh]">
+            <div className="flex items-center justify-between p-3 pb-2 flex-shrink-0">
+              <h3 className="text-lg font-bold text-gray-800">Calcular Pago</h3>
               <button
                 onClick={() => setShowPayModal(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            <div className="bg-cyan-100 rounded-lg p-3 mb-3">
-              <div className="flex justify-between text-lg">
-                <span className="font-semibold">Total a pagar:</span>
-                <span className="font-bold text-cyan-700 text-xl">{moneyFormat(total)}</span>
+            <div className="flex-1 overflow-y-auto px-3">
+              <div className="bg-cyan-100 rounded-lg p-2 mb-2">
+                <div className="flex justify-between">
+                  <span className="font-semibold text-sm">Total a pagar:</span>
+                  <span className="font-bold text-cyan-700 text-lg">{moneyFormat(total)}</span>
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-3 mb-3">
-              <p className="font-semibold text-gray-700 text-sm">Denominaciones:</p>
-              <div className="grid grid-cols-4 gap-2">
+              <p className="font-semibold text-gray-700 text-xs mb-1">Denominaciones:</p>
+              <div className="grid grid-cols-4 gap-1.5 mb-2">
                 {DENOMINATIONS.map((denom) => (
                   <button
                     key={denom}
                     onClick={() => incrementDenomination(denom)}
-                    className="bg-cyan-500 text-white px-2 py-3 rounded-lg font-bold hover:bg-cyan-600 transition text-sm"
+                    className="bg-cyan-500 text-white px-1 py-2 rounded-lg font-bold hover:bg-cyan-600 transition text-xs"
                   >
                     {moneyFormat(denom)}
                   </button>
                 ))}
                 <button
                   onClick={() => setSelectedPaymentMethod(selectedPaymentMethod === 'BRE-B' ? 'EFECTIVO' : 'BRE-B')}
-                  className={`px-2 py-3 rounded-lg font-bold transition text-sm ${
+                  className={`px-1 py-2 rounded-lg font-bold transition text-xs ${
                     selectedPaymentMethod === 'BRE-B'
                       ? 'bg-purple-700 text-white ring-2 ring-purple-300'
                       : 'bg-purple-500 text-white hover:bg-purple-600'
@@ -180,44 +180,44 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
                   BRE-B
                 </button>
               </div>
+
+              <div className="bg-gray-100 rounded-lg p-2 space-y-1">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Total pagado:</span>
+                  <span className="font-bold text-green-600">
+                    {selectedPaymentMethod === 'BRE-B' ? moneyFormat(total) : moneyFormat(totalPaid)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Total a pagar:</span>
+                  <span className="font-bold">{moneyFormat(total)}</span>
+                </div>
+                <hr className="border-gray-300" />
+                <div className="flex justify-between">
+                  <span className="font-semibold text-sm">{selectedPaymentMethod === 'BRE-B' ? 'Método:' : 'Cambio:'}</span>
+                  <span className={`font-bold text-lg ${selectedPaymentMethod === 'BRE-B' ? 'text-purple-600' : (change >= 0 ? 'text-green-600' : 'text-red-600')}`}>
+                    {selectedPaymentMethod === 'BRE-B' ? 'Transferencia' : (
+                      <>
+                        {moneyFormat(Math.abs(change))}
+                        {change < 0 && ' (Falta)'}
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <div className="bg-gray-100 rounded-lg p-4 space-y-2 mb-3">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Total pagado:</span>
-                <span className="font-bold text-green-600 text-lg">
-                  {selectedPaymentMethod === 'BRE-B' ? moneyFormat(total) : moneyFormat(totalPaid)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Total a pagar:</span>
-                <span className="font-bold">{moneyFormat(total)}</span>
-              </div>
-              <hr className="border-gray-300" />
-              <div className="flex justify-between text-lg">
-                <span className="font-semibold">{selectedPaymentMethod === 'BRE-B' ? 'Método:' : 'Cambio:'}</span>
-                <span className={`font-bold text-xl ${selectedPaymentMethod === 'BRE-B' ? 'text-purple-600' : (change >= 0 ? 'text-green-600' : 'text-red-600')}`}>
-                  {selectedPaymentMethod === 'BRE-B' ? 'Transferencia' : (
-                    <>
-                      {moneyFormat(Math.abs(change))}
-                      {change < 0 && ' (Falta)'}
-                    </>
-                  )}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
+            <div className="flex gap-2 p-3 pt-2 flex-shrink-0">
               <button
                 onClick={() => setShowPayModal(false)}
-                className="flex-1 px-4 py-3 bg-red-100 border border-red-300 rounded-lg text-red-600 hover:bg-red-200 transition font-medium"
+                className="flex-1 px-3 py-2.5 bg-red-100 border border-red-300 rounded-lg text-red-600 hover:bg-red-200 transition font-medium text-sm"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmPayment}
                 disabled={(selectedPaymentMethod === 'EFECTIVO' && totalPaid < total) || isProcessing || itemsSale.length === 0}
-                className={`flex-1 px-4 py-3 rounded-lg font-medium transition ${
+                className={`flex-1 px-3 py-2.5 rounded-lg font-medium transition text-sm ${
                   ((selectedPaymentMethod === 'BRE-B') || (selectedPaymentMethod === 'EFECTIVO' && totalPaid >= total)) && !isProcessing && itemsSale.length > 0
                     ? 'bg-green-500 text-white hover:bg-green-600'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
