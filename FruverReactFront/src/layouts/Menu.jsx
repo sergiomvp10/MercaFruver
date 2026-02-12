@@ -120,8 +120,8 @@ const Menu = (props) => {
           <img src="/images/logo-mercafruver.png" alt="MercaFruver" className="h-20 object-contain" />
         </div>
 
-        <nav className="flex flex-col flex-1 py-2 justify-evenly">
-          <div className="flex flex-col justify-evenly flex-1">
+        <nav className="flex flex-col flex-1 py-2">
+          <div className="flex flex-col gap-1">
             <Link href={routes.home}>
               <div className={isActive(routes.home) ? "bg-cyan-600 rounded-r-lg mr-2" : ""}>
                 <MenuButton fullContent={true} icon={home}>
