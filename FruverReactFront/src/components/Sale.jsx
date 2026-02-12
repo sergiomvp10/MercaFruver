@@ -16,12 +16,11 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     const [confirmationData, setConfirmationData] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('EFECTIVO');
+    const [saleConfirmed, setSaleConfirmed] = useState(false);
   const { user } = useContext(AuthContext);
 
-  const checkPay = async () => {
-    const sale = await serviceMakeSale(itemsSale, user?.id || 1)
+  const prepareForPrint = () => {
     valuePay == undefined ? setPay(totalSale(itemsSale)) : setPay(valuePay);
-    setSale(sale.id)
   };
 
   const total = totalSale(itemsSale);
@@ -49,7 +48,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     };
 
     const confirmPayment = async () => {
-      if (itemsSale.length === 0) return;
+      if (itemsSale.length === 0 || saleConfirmed) return;
     
       setIsProcessing(true);
       try {
@@ -59,6 +58,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
       setPay(paidAmount);
       setSale(sale.id);
       
+      setSaleConfirmed(true);
       setConfirmationData({
         total: total,
         paid: paidAmount,
@@ -79,6 +79,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     setShowConfirmation(false);
     setConfirmationData(null);
     setDenominationCounts({});
+    setSaleConfirmed(false);
     if (clearSale) {
       clearSale();
     }
@@ -120,14 +121,16 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
         <div>
           <button
             onClick={openPayModal}
-            className="bg-green-400 w-full rounded-lg py-2 cursor-pointer hover:scale-105 duration-300 border-4 border-green-500 font-bold mb-2"
+            disabled={saleConfirmed || itemsSale.length === 0}
+            className={`w-full rounded-lg py-2 cursor-pointer hover:scale-105 duration-300 border-4 font-bold mb-2 ${saleConfirmed || itemsSale.length === 0 ? 'bg-gray-300 border-gray-400 cursor-not-allowed' : 'bg-green-400 border-green-500'}`}
           >
             Pagar
           </button>
           <Link href={{pathname:"/bill"}} >
             <button
-              onClick={checkPay}
-              className="bg-cyan-200 w-full rounded-lg py-2 cursor-pointer hover:scale-105 duration-300 border-4 border-cyan-300 font-bold"
+              onClick={prepareForPrint}
+              disabled={!saleConfirmed}
+              className={`w-full rounded-lg py-2 cursor-pointer hover:scale-105 duration-300 border-4 font-bold ${!saleConfirmed ? 'bg-gray-300 border-gray-400 cursor-not-allowed' : 'bg-cyan-200 border-cyan-300'}`}
             >
               Imprimir
             </button>
@@ -263,12 +266,22 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
               </div>
             </div>
             
-            <button
-              onClick={closeConfirmation}
-              className="w-full px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition"
-            >
-              Aceptar
-            </button>
+            <div className="flex gap-2">
+              <Link href={{pathname:"/bill"}}>
+                <button
+                  onClick={() => { prepareForPrint(); closeConfirmation(); }}
+                  className="flex-1 px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition"
+                >
+                  Imprimir
+                </button>
+              </Link>
+              <button
+                onClick={closeConfirmation}
+                className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition"
+              >
+                Aceptar
+              </button>
+            </div>
           </div>
         </div>
       )}
