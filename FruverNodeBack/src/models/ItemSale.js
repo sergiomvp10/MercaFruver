@@ -22,9 +22,8 @@ export const ItemSale = sequelize.define(
       // allowNull defaults to true
     },
     amount: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: false,
-      // allowNull defaults to true
     },
   },
   {
