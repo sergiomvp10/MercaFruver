@@ -39,7 +39,7 @@ export const newSale = async (req, res, next) => {
         const product = await Product.findByPk(itemSale.ProductId, { transaction: t });
         if (product) {
           productNames.push(product.name);
-          const newStock = (product.stock || 0) - (itemSale.amount || 0);
+          const newStock = Math.round(((product.stock || 0) - (itemSale.amount || 0)) * 100) / 100;
           await product.update({ stock: newStock }, { transaction: t });
         } else {
           productNames.push('Producto desconocido');
