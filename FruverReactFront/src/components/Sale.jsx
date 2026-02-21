@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import ItemSale from "./ItemSale";
 import { totalSale } from "@/utilities/calculates";
 import { moneyFormat } from "@/utilities/formats";
@@ -17,6 +17,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('EFECTIVO');
     const [saleConfirmed, setSaleConfirmed] = useState(false);
+    const processingLockRef = useRef(false);
   const { user } = useContext(AuthContext);
 
   const prepareForPrint = () => {
@@ -48,7 +49,8 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     };
 
     const confirmPayment = async () => {
-      if (itemsSale.length === 0 || saleConfirmed) return;
+      if (itemsSale.length === 0 || processingLockRef.current) return;
+      processingLockRef.current = true;
     
       setIsProcessing(true);
       try {
@@ -70,6 +72,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
       setShowConfirmation(true);
                 } catch (error) {
                   console.error('Error al registrar la venta:', error);
+                  processingLockRef.current = false;
                 } finally {
       setIsProcessing(false);
     }
@@ -80,6 +83,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     setConfirmationData(null);
     setDenominationCounts({});
     setSaleConfirmed(false);
+    processingLockRef.current = false;
     if (clearSale) {
       clearSale();
     }
@@ -219,9 +223,9 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
               </button>
               <button
                 onClick={confirmPayment}
-                disabled={(selectedPaymentMethod === 'EFECTIVO' && totalPaid < total) || isProcessing || itemsSale.length === 0}
+                disabled={(selectedPaymentMethod === 'EFECTIVO' && totalPaid < total) || isProcessing || saleConfirmed || itemsSale.length === 0}
                 className={`flex-1 px-2 py-2 rounded-lg font-medium transition text-sm ${
-                  ((selectedPaymentMethod === 'BRE-B') || (selectedPaymentMethod === 'EFECTIVO' && totalPaid >= total)) && !isProcessing && itemsSale.length > 0
+                  ((selectedPaymentMethod === 'BRE-B') || (selectedPaymentMethod === 'EFECTIVO' && totalPaid >= total)) && !isProcessing && !saleConfirmed && itemsSale.length > 0
                     ? 'bg-green-500 text-white hover:bg-green-600'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
