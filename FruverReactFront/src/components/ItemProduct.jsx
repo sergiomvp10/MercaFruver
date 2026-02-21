@@ -68,7 +68,7 @@ const ItemProduct = (props) => {
       <div className="font-bold break-words col-span-2 text-left">{props.name}</div>
       <div className="flex-1 col-start-3">{props.description}</div>
       <div className="flex-1 ">{props.price_sale}</div>
-      <div className="flex-1">{props.stock != null ? Math.round(props.stock * 100) / 100 : 0}</div>
+      <div className="flex-1">{props.stock != null && !isNaN(props.stock) ? Math.round(props.stock * 100) / 100 : 0}</div>
       {props.children}
       {actions?.edit && (
         <div

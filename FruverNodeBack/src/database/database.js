@@ -21,4 +21,11 @@ export const sequelize = new Sequelize({
   } catch (e) {
     console.log('Migration check:', e.message);
   }
+
+  try {
+    await sequelize.query(`UPDATE Products SET stock = 0 WHERE stock IS NULL OR typeof(stock) = 'text' OR CAST(stock AS REAL) != CAST(stock AS REAL)`);
+    console.log('Fixed NaN stock values');
+  } catch (e) {
+    console.log('Stock fix:', e.message);
+  }
 })();
