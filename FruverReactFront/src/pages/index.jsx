@@ -18,35 +18,57 @@ export default function Home() {
 
   const contextSale = useContext(SaleContext);
   const [searchValue,setSearchValue] = useState('')
-  const [barcodeInput, setBarcodeInput] = useState('')
 
-  const handleBarcodeInput = (e) => {
-    if (e.key === 'Enter') {
-      if (barcodeInput.length === 13) {
-        contextSale.addItemSaleByBarcode(barcodeInput);
-        setBarcodeInput('');
+  const scanBufferRef = useRef('');
+  const scanTimerRef = useRef(null);
+  const lastScanKeyTimeRef = useRef(0);
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if (e.target.tagName === 'INPUT' && e.target.type === 'number') {
+        return;
       }
-    } else if (e.key.length === 1 && /\d/.test(e.key)) {
-      setBarcodeInput(prev => prev + e.key);
-    }
-  };
 
+      const now = Date.now();
+      const timeDiff = now - lastScanKeyTimeRef.current;
 
-  console.log("Este es",contextSale)
-  const barcodeTimerRef = useRef(null);
+      if (/^\d$/.test(e.key)) {
+        if (timeDiff < 100 || scanBufferRef.current.length === 0) {
+          scanBufferRef.current += e.key;
+        } else {
+          scanBufferRef.current = e.key;
+        }
+        lastScanKeyTimeRef.current = now;
+
+        if (scanTimerRef.current) clearTimeout(scanTimerRef.current);
+        scanTimerRef.current = setTimeout(() => {
+          scanBufferRef.current = '';
+        }, 300);
+      } else if (e.key === 'Enter' && /^\d{8,13}$/.test(scanBufferRef.current)) {
+        e.preventDefault();
+        e.stopPropagation();
+        const barcode = scanBufferRef.current;
+        scanBufferRef.current = '';
+        if (scanTimerRef.current) clearTimeout(scanTimerRef.current);
+
+        const active = document.activeElement;
+        if (active && active.tagName === 'INPUT') {
+          active.value = '';
+        }
+        setSearchValue('');
+
+        contextSale.addItemSaleByBarcode(barcode);
+      } else if (e.key !== 'Shift' && e.key !== 'Control' && e.key !== 'Alt' && e.key !== 'Meta') {
+        scanBufferRef.current = '';
+      }
+    };
+
+    document.addEventListener('keydown', handleGlobalKeyDown, true);
+    return () => document.removeEventListener('keydown', handleGlobalKeyDown, true);
+  }, [contextSale]);
 
   const handleSearch = (e) => {
-    const val = e.target.value;
-    setSearchValue(val);
-    if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
-    if (/^\d{4,}$/.test(val.trim())) {
-      barcodeTimerRef.current = setTimeout(() => {
-        if (/^\d{4,13}$/.test(val.trim())) {
-          contextSale.addItemSaleByBarcode(val.trim());
-          setSearchValue('');
-        }
-      }, 300);
-    }
+    setSearchValue(e.target.value);
   }
 
   const handleSearchKeyDown = (e) => {
@@ -54,7 +76,6 @@ export default function Home() {
       const val = searchValue.trim();
       if (/^\d{4,13}$/.test(val)) {
         e.preventDefault();
-        if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
         contextSale.addItemSaleByBarcode(val);
         setSearchValue('');
       }
@@ -65,6 +86,10 @@ export default function Home() {
     if (e.key === 'Enter') {
       e.preventDefault();
       const val = e.target.value;
+      if (/^\d{8,}$/.test(val)) {
+        e.target.value = '';
+        return;
+      }
       const amount = product.pesable ? parseFloat(val) : parseInt(val);
       if (!amount || amount <= 0) {
         e.target.value = '';
@@ -85,11 +110,6 @@ export default function Home() {
 
   return (
     <Menu>
-      <input
-        style={{ position: 'absolute', left: '-9999px', opacity: 0 }}
-        onKeyDown={handleBarcodeInput}
-        autoFocus
-      />
             <div className="h-full flex flex-col overflow-hidden">
               <div className="bg-gradient-to-b from-cyan-700 to-cyan-800 p-4 text-center font-bold text-2xl text-white flex-shrink-0">
                 Inicio
