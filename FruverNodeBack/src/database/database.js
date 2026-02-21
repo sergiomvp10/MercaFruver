@@ -7,5 +7,18 @@ export const sequelize = new Sequelize({
 
 (async () => {
   await sequelize.sync({ force: false });
-  // Code here
+
+  try {
+    const [tableInfo] = await sequelize.query("PRAGMA table_info('ItemSales')");
+    const amountCol = tableInfo.find(c => c.name === 'amount');
+    if (amountCol && amountCol.type === 'INTEGER') {
+      await sequelize.query(`CREATE TABLE ItemSales_tmp (id INTEGER PRIMARY KEY, price_purchase INTEGER NOT NULL, price_sale INTEGER NOT NULL, amount REAL NOT NULL, createdAt DATETIME NOT NULL, updatedAt DATETIME NOT NULL, ProductId INTEGER REFERENCES Products(id), SaleId INTEGER REFERENCES Sales(id) ON DELETE CASCADE ON UPDATE CASCADE)`);
+      await sequelize.query(`INSERT INTO ItemSales_tmp SELECT * FROM ItemSales`);
+      await sequelize.query(`DROP TABLE ItemSales`);
+      await sequelize.query(`ALTER TABLE ItemSales_tmp RENAME TO ItemSales`);
+      console.log('Migrated ItemSales.amount from INTEGER to REAL');
+    }
+  } catch (e) {
+    console.log('Migration check:', e.message);
+  }
 })();
