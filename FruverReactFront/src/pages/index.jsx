@@ -18,6 +18,9 @@ export default function Home() {
 
   const contextSale = useContext(SaleContext);
   const [searchValue,setSearchValue] = useState('')
+  const searchRef = useRef(null);
+
+  const focusSearch = () => setTimeout(() => searchRef.current?.focus(), 50);
 
   const scanBufferRef = useRef('');
   const scanTimerRef = useRef(null);
@@ -58,6 +61,7 @@ export default function Home() {
         setSearchValue('');
 
         contextSale.addItemSaleByBarcode(barcode);
+        focusSearch();
       } else if (e.key !== 'Shift' && e.key !== 'Control' && e.key !== 'Alt' && e.key !== 'Meta') {
         scanBufferRef.current = '';
       }
@@ -78,6 +82,7 @@ export default function Home() {
         e.preventDefault();
         contextSale.addItemSaleByBarcode(val);
         setSearchValue('');
+        focusSearch();
       }
     }
   }
@@ -104,6 +109,7 @@ export default function Home() {
         product.id
       );
       setSearchValue('');
+      focusSearch();
     }
   }
 
@@ -123,6 +129,7 @@ export default function Home() {
                       icon={u1F50D}
                       onChange={handleSearch}
                       onKeyDown={handleSearchKeyDown}
+                      inputRef={searchRef}
                     ></InputIcon>
                   </div>
                   <div className="flex-1 flex flex-col gap-2 overflow-y-auto p-2">
