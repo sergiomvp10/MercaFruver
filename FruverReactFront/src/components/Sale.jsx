@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import ItemSale from "./ItemSale";
 import { totalSale } from "@/utilities/calculates";
 import { moneyFormat } from "@/utilities/formats";
@@ -6,7 +6,7 @@ import Link from "next/link";
 import { serviceMakeSale } from "@/services/productsApi";
 import { AuthContext } from "@/contexts/authContext";
 
-const DENOMINATIONS = [100000, 50000, 20000, 10000, 5000, 2000, 1000];
+const DENOMINATIONS = [100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50];
 
 const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleComplete }) => {
   const [valuePay, setValuePay] = useState();
@@ -16,12 +16,12 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     const [confirmationData, setConfirmationData] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('EFECTIVO');
+    const [saleConfirmed, setSaleConfirmed] = useState(false);
+    const processingLockRef = useRef(false);
   const { user } = useContext(AuthContext);
 
-  const checkPay = async () => {
-    const sale = await serviceMakeSale(itemsSale, user?.id || 1)
+  const prepareForPrint = () => {
     valuePay == undefined ? setPay(totalSale(itemsSale)) : setPay(valuePay);
-    setSale(sale.id)
   };
 
   const total = totalSale(itemsSale);
@@ -49,7 +49,8 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     };
 
     const confirmPayment = async () => {
-      if (itemsSale.length === 0) return;
+      if (itemsSale.length === 0 || processingLockRef.current) return;
+      processingLockRef.current = true;
     
       setIsProcessing(true);
       try {
@@ -59,6 +60,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
       setPay(paidAmount);
       setSale(sale.id);
       
+      setSaleConfirmed(true);
       setConfirmationData({
         total: total,
         paid: paidAmount,
@@ -70,6 +72,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
       setShowConfirmation(true);
                 } catch (error) {
                   console.error('Error al registrar la venta:', error);
+                  processingLockRef.current = false;
                 } finally {
       setIsProcessing(false);
     }
@@ -79,6 +82,8 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
     setShowConfirmation(false);
     setConfirmationData(null);
     setDenominationCounts({});
+    setSaleConfirmed(false);
+    processingLockRef.current = false;
     if (clearSale) {
       clearSale();
     }
@@ -120,14 +125,16 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
         <div>
           <button
             onClick={openPayModal}
-            className="bg-green-400 w-full rounded-lg py-2 cursor-pointer hover:scale-105 duration-300 border-4 border-green-500 font-bold mb-2"
+            disabled={saleConfirmed || itemsSale.length === 0}
+            className={`w-full rounded-lg py-2 cursor-pointer hover:scale-105 duration-300 border-4 font-bold mb-2 ${saleConfirmed || itemsSale.length === 0 ? 'bg-gray-300 border-gray-400 cursor-not-allowed' : 'bg-green-400 border-green-500'}`}
           >
             Pagar
           </button>
           <Link href={{pathname:"/bill"}} >
             <button
-              onClick={checkPay}
-              className="bg-cyan-200 w-full rounded-lg py-2 cursor-pointer hover:scale-105 duration-300 border-4 border-cyan-300 font-bold"
+              onClick={prepareForPrint}
+              disabled={!saleConfirmed}
+              className={`w-full rounded-lg py-2 cursor-pointer hover:scale-105 duration-300 border-4 font-bold ${!saleConfirmed ? 'bg-gray-300 border-gray-400 cursor-not-allowed' : 'bg-cyan-200 border-cyan-300'}`}
             >
               Imprimir
             </button>
@@ -136,95 +143,95 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
       </div>
 
       {showPayModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-1/2 max-h-[80vh] shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-gray-800">Calcular Pago</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center z-50">
+          <div className="bg-white rounded-t-xl sm:rounded-xl shadow-2xl flex flex-col w-full sm:w-[95%] sm:max-w-md" style={{maxHeight: 'calc(100vh - 10px)', maxHeight: 'calc(100dvh - 10px)'}}>
+            <div className="flex items-center justify-between px-3 py-2 border-b flex-shrink-0">
+              <h3 className="text-base font-bold text-gray-800">Calcular Pago</h3>
               <button
                 onClick={() => setShowPayModal(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 p-1"
               >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            <div className="bg-cyan-100 rounded-lg p-4 mb-6">
-              <div className="flex justify-between text-xl">
-                <span className="font-semibold">Total a pagar:</span>
-                <span className="font-bold text-cyan-700 text-2xl">{moneyFormat(total)}</span>
+            <div className="flex-1 overflow-y-auto px-3 py-2" style={{minHeight: 0}}>
+              <div className="bg-cyan-100 rounded-lg p-2 mb-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-xs">Total a pagar:</span>
+                  <span className="font-bold text-cyan-700 text-base">{moneyFormat(total)}</span>
+                </div>
+              </div>
+
+              <p className="font-semibold text-gray-700 text-xs mb-1">Denominaciones:</p>
+              <div className="grid grid-cols-4 gap-1 mb-2">
+                {DENOMINATIONS.map((denom) => (
+                  <button
+                    key={denom}
+                    onClick={() => incrementDenomination(denom)}
+                    className="bg-cyan-500 text-white px-1 py-1.5 rounded-md font-bold hover:bg-cyan-600 transition text-[11px]"
+                  >
+                    {moneyFormat(denom)}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setSelectedPaymentMethod(selectedPaymentMethod === 'BRE-B' ? 'EFECTIVO' : 'BRE-B')}
+                  className={`px-1 py-1.5 rounded-md font-bold transition text-[11px] ${
+                    selectedPaymentMethod === 'BRE-B'
+                      ? 'bg-purple-700 text-white ring-2 ring-purple-300'
+                      : 'bg-purple-500 text-white hover:bg-purple-600'
+                  }`}
+                >
+                  BRE-B
+                </button>
+              </div>
+
+              <div className="bg-gray-100 rounded-lg p-2 space-y-0.5">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600">Total pagado:</span>
+                  <span className="font-bold text-green-600">
+                    {selectedPaymentMethod === 'BRE-B' ? moneyFormat(total) : moneyFormat(totalPaid)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600">Total a pagar:</span>
+                  <span className="font-bold">{moneyFormat(total)}</span>
+                </div>
+                <hr className="border-gray-300" />
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-xs">{selectedPaymentMethod === 'BRE-B' ? 'Método:' : 'Cambio:'}</span>
+                  <span className={`font-bold text-sm ${selectedPaymentMethod === 'BRE-B' ? 'text-purple-600' : (change >= 0 ? 'text-green-600' : 'text-red-600')}`}>
+                    {selectedPaymentMethod === 'BRE-B' ? 'Transferencia' : (
+                      <>
+                        {moneyFormat(Math.abs(change))}
+                        {change < 0 && ' (Falta)'}
+                      </>
+                    )}
+                  </span>
+                </div>
               </div>
             </div>
 
-                        <div className="flex-1 flex flex-col justify-center space-y-4 mb-4">
-                          <p className="font-semibold text-gray-700 mb-2 text-lg">Denominaciones:</p>
-                          <div className="grid grid-cols-4 gap-4">
-                            {DENOMINATIONS.map((denom) => (
-                              <button
-                                key={denom}
-                                onClick={() => incrementDenomination(denom)}
-                                className="bg-cyan-500 text-white px-4 py-4 rounded-lg font-bold hover:bg-cyan-600 transition text-lg"
-                              >
-                                {moneyFormat(denom)}
-                              </button>
-                            ))}
-                                                        <button
-                                                          onClick={() => setSelectedPaymentMethod(selectedPaymentMethod === 'BRE-B' ? 'EFECTIVO' : 'BRE-B')}
-                                                          className={`px-4 py-4 rounded-lg font-bold transition text-lg ${
-                                                            selectedPaymentMethod === 'BRE-B'
-                                                              ? 'bg-purple-700 text-white ring-4 ring-purple-300'
-                                                              : 'bg-purple-500 text-white hover:bg-purple-600'
-                                                          }`}
-                                                        >
-                                                          BRE-B
-                                                        </button>
-                          </div>
-                        </div>
-
-                        <div className="bg-gray-100 rounded-lg p-6 space-y-3">
-                          <div className="flex justify-between text-lg">
-                            <span className="text-gray-600">Total pagado:</span>
-                            <span className="font-bold text-green-600 text-xl">
-                              {selectedPaymentMethod === 'BRE-B' ? moneyFormat(total) : moneyFormat(totalPaid)}
-                            </span>
-                          </div>
-                          <div className="flex justify-between text-lg">
-                            <span className="text-gray-600">Total a pagar:</span>
-                            <span className="font-bold text-xl">{moneyFormat(total)}</span>
-                          </div>
-                          <hr className="border-gray-300" />
-                          <div className="flex justify-between text-xl">
-                            <span className="font-semibold">{selectedPaymentMethod === 'BRE-B' ? 'Método:' : 'Cambio:'}</span>
-                            <span className={`font-bold text-2xl ${selectedPaymentMethod === 'BRE-B' ? 'text-purple-600' : (change >= 0 ? 'text-green-600' : 'text-red-600')}`}>
-                              {selectedPaymentMethod === 'BRE-B' ? 'Transferencia' : (
-                                <>
-                                  {moneyFormat(Math.abs(change))}
-                                  {change < 0 && ' (Falta)'}
-                                </>
-                              )}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-4 mt-6">
-                          <button
-                            onClick={() => setShowPayModal(false)}
-                            className="flex-1 px-6 py-4 bg-red-100 border border-red-300 rounded-lg text-red-600 hover:bg-red-200 transition font-medium text-lg"
-                          >
-                            Cancelar
-                          </button>
-                                                        <button
-                                                          onClick={confirmPayment}
-                                                          disabled={(selectedPaymentMethod === 'EFECTIVO' && totalPaid < total) || isProcessing || itemsSale.length === 0}
-                                                          className={`flex-1 px-6 py-4 rounded-lg font-medium transition text-lg ${
-                                                            ((selectedPaymentMethod === 'BRE-B') || (selectedPaymentMethod === 'EFECTIVO' && totalPaid >= total)) && !isProcessing && itemsSale.length > 0
-                                                              ? 'bg-green-500 text-white hover:bg-green-600'
-                                                              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                          }`}
-                                                        >
-                                                          {isProcessing ? 'Procesando...' : 'Confirmar'}
-                                                        </button>
+            <div className="flex gap-2 px-3 py-2 border-t flex-shrink-0">
+              <button
+                onClick={() => setShowPayModal(false)}
+                className="flex-1 px-2 py-2 bg-red-100 border border-red-300 rounded-lg text-red-600 hover:bg-red-200 transition font-medium text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmPayment}
+                disabled={(selectedPaymentMethod === 'EFECTIVO' && totalPaid < total) || isProcessing || saleConfirmed || itemsSale.length === 0}
+                className={`flex-1 px-2 py-2 rounded-lg font-medium transition text-sm ${
+                  ((selectedPaymentMethod === 'BRE-B') || (selectedPaymentMethod === 'EFECTIVO' && totalPaid >= total)) && !isProcessing && !saleConfirmed && itemsSale.length > 0
+                    ? 'bg-green-500 text-white hover:bg-green-600'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                {isProcessing ? 'Procesando...' : 'Confirmar'}
+              </button>
             </div>
           </div>
         </div>
@@ -263,12 +270,22 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
               </div>
             </div>
             
-            <button
-              onClick={closeConfirmation}
-              className="w-full px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition"
-            >
-              Aceptar
-            </button>
+            <div className="flex gap-2">
+              <Link href={{pathname:"/bill"}}>
+                <button
+                  onClick={() => { prepareForPrint(); }}
+                  className="flex-1 px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition"
+                >
+                  Imprimir
+                </button>
+              </Link>
+              <button
+                onClick={closeConfirmation}
+                className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition"
+              >
+                Aceptar
+              </button>
+            </div>
           </div>
         </div>
       )}

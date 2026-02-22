@@ -16,27 +16,33 @@ export const getSales = async (req, res, next) => {
 };
 
 export const newSale = async (req, res, next) => {
+  const t = await sequelize.transaction();
   try {
     const { itemsSale, userId, date, paymentMethod } = req.body || req.query;
+
+    if (!itemsSale || !Array.isArray(itemsSale) || itemsSale.length === 0) {
+      await t.rollback();
+      return res.status(400).json({ message: "No hay productos en la venta" });
+    }
+
     const sale = await Sale.create({
       date: Date.now(),
       UserId: userId,
       paymentMethod: paymentMethod || 'EFECTIVO'
-    });
-
-    initDailyLog();
+    }, { transaction: t });
 
     const productNames = [];
     for (const itemSale of itemsSale) {
-      console.log(itemSale);
-      await ItemSale.create({ ...itemSale, SaleId: sale.dataValues.id });
+      await ItemSale.create({ ...itemSale, SaleId: sale.dataValues.id }, { transaction: t });
       
       if (itemSale.ProductId) {
-        const product = await Product.findByPk(itemSale.ProductId);
+        const product = await Product.findByPk(itemSale.ProductId, { transaction: t });
         if (product) {
           productNames.push(product.name);
-          const newStock = (product.stock || 0) - (itemSale.amount || 0);
-          await product.update({ stock: newStock });
+          const currentStock = parseFloat(product.stock) || 0;
+          const saleAmount = parseFloat(itemSale.amount) || 0;
+          const newStock = Math.round((currentStock - saleAmount) * 100) / 100;
+          await product.update({ stock: newStock }, { transaction: t });
         } else {
           productNames.push('Producto desconocido');
         }
@@ -45,10 +51,14 @@ export const newSale = async (req, res, next) => {
       }
     }
 
+    await t.commit();
+
+    initDailyLog();
     await logSale(sale.dataValues.id, itemsSale, productNames);
 
     res.status(200).json(sale);
   } catch (error) {
+    await t.rollback();
     console.log(error);
     res.status(400).json({ message: "Error en la venta" });
   }
