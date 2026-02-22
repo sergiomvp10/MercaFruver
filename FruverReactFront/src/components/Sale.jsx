@@ -273,7 +273,7 @@ const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleCom
             <div className="flex gap-2">
               <Link href={{pathname:"/bill"}}>
                 <button
-                  onClick={() => { prepareForPrint(); closeConfirmation(); }}
+                  onClick={() => { prepareForPrint(); }}
                   className="flex-1 px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition"
                 >
                   Imprimir
