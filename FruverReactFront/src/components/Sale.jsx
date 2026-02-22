@@ -6,7 +6,7 @@ import Link from "next/link";
 import { serviceMakeSale } from "@/services/productsApi";
 import { AuthContext } from "@/contexts/authContext";
 
-const DENOMINATIONS = [100000, 50000, 20000, 10000, 5000, 2000, 1000];
+const DENOMINATIONS = [100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50];
 
 const Sale = ({ itemsSale, deleteItemSale, setPay, setSale, clearSale, onSaleComplete }) => {
   const [valuePay, setValuePay] = useState();
